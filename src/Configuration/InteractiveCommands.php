@@ -1,7 +1,4 @@
-<?php namespace Comodojo\Installer\Parser;
-
-use Composer\Package\PackageInterface;
-use Comodojo\Installer\Registry\SupportedTypes;
+<?php namespace Comodojo\Installer\Configuration;
 
 /**
  * Comodojo Installer
@@ -26,24 +23,6 @@ use Comodojo\Installer\Registry\SupportedTypes;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-class Parser {
-
-    public static function parse(PackageInterface $package) {
-
-        $type = $package->getType();
-
-        $extra = $package->getExtra();
-
-        $map = array();
-
-        foreach (SupportedTypes::getActions($type) as $field => $action) {
-
-            if ( isset($extra[$field]) ) $map[$action] = $extra[$field];
-
-        }
-
-        return $map;
-
-    }
+class InteractiveCommands {
 
 }

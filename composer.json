@@ -1,5 +1,5 @@
 {
-    "name": "comodojo/comodojo.installer",
+    "name": "comodojo/comodojo-installer",
     "type": "composer-plugin",
     "license": "GPL-3.0+",
     "description": "Comodojo Package Installer",
@@ -13,14 +13,10 @@
             "name": "Marco Giovinazzi",
             "email": "marco.giovinazzi@comodojo.org",
             "homepage": "http://jme.altervista.org"
-        },
-        {
-            "name": "Marco Castiello",
-            "email": "marco.castiello@gmail.com"
         }
     ],
     "support": {
-        "issues": "https://github.com/comodojo/comodojo.installer/issues"
+        "issues": "https://github.com/comodojo/comodojo-installer/issues"
     },
     "autoload": {
         "psr-4": {

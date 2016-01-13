@@ -6,6 +6,8 @@ use Composer\Package\PackageInterface;
 use Composer\Repository\InstalledRepositoryInterface;
 use Comodojo\Exception\InstallerException;
 use Comodojo\Installer\Properties\Parser;
+use Comodojo\Installer\Registry\SupportedTypes;
+
 
 /**
  * Comodojo Installer
@@ -32,22 +34,12 @@ use Comodojo\Installer\Properties\Parser;
 
 class Installer extends LibraryInstaller {
 
-    protected static $known_types = array(
-    	'extender-plugins-bundle',
-	    'extender-tasks-bundle',
-	    'extender-commands-bundle',
-	    'dispatcher-plugin',
-	    'dispatcher-service-bundle',
-        'comodojo-app',
-	    'comodojo-bundle'
-    );
-
     /**
      * {@inheritDoc}
      */
     public function supports($packageType) {
 
-        return in_array($packageType, self::$known_types);
+        return in_array($packageType, SupportedTypes::getTypes());
 
     }
 
@@ -94,7 +86,7 @@ class Installer extends LibraryInstaller {
 
             $action = new $action_fqcn($this->composer, $this->io);
 
-            $action->install($extra)
+            $action->install($extra);
 
         }
 
@@ -110,7 +102,7 @@ class Installer extends LibraryInstaller {
 
             $action = new $action_fqcn($this->composer, $this->io);
 
-            $action->uninstall($extra)
+            $action->uninstall($extra);
 
         }
 

@@ -1,2 +1,2 @@
-# comodojo.installer
+# comodojo-installer
 Comodojo Package Installer

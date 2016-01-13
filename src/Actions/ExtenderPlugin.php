@@ -1,5 +1,9 @@
 <?php namespace Comodojo\Installer\Actions;
 
+use \Comodojo\Installer\Configuration\ExtenderConfiguration;
+use \Comodojo\Exception\InstallerException;
+use \Exception;
+
 /**
  * Comodojo Installer
  *
@@ -25,22 +29,68 @@
 
 class ExtenderPlugin extends AbstractAction {
 
-    public function install($package_extra) {
+    public function install($package_name, $package_extra) {
+        
+        $io = $this->getIO();
 
+        $io->write(">>> Enabling plugins of package ".$package_name);
 
+        foreach ($package_extra as $plugin) {
+            
+            try {
+                
+                if ( !self::validatePlugin($plugin) ) throw new InstallerException('Skipping invalid plugin in '.$package_name);
+            
+                ExtenderConfiguration::addPlugin($plugin);
+                
+                $io->write("+ Enabled plugin ".$plugin["class"]."::".$plugin["method"]." on event ".$plugin["event"]);
+               
+            } catch (Exception $e) {
+                
+                $this->getIO()->write('<error>'.$e->getMessage().'</error>', false);
+                
+            }
+            
+        }
 
     }
 
-    public function update($initial_extra, $target_extra) {
+    public function update($package_name, $initial_extra, $target_extra) {
+        
+        $io = $this->getIO();
 
+        $io->write(">>> Updating plugins of package ".$package_name);
 
+        $this->uninstall($package_name, $initial_extra);
+        
+        $this->install($package_name, $target_extra);
 
     }
 
-    public function uninstall($package_extra) {
+    public function uninstall($package_name, $package_extra) {
 
+        foreach ($package_extra as $plugin) {
+            
+            try {
+                
+                if ( !self::validatePlugin($plugin) ) throw new InstallerException('Skipping invalid plugin in '.$package_name);
+            
+                ExtenderConfiguration::removePlugin($plugin);
+               
+            } catch (Exception $e) {
+                
+                $this->getIO()->write('<error>'.$e->getMessage().'</error>');
+                
+            }
+            
+        }
 
-
+    }
+    
+    private static function validatePlugin($plugin) {
+        
+        return !( empty($plugin["class"]) || empty($plugin["event"]) );
+        
     }
 
 }

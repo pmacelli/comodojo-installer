@@ -1,5 +1,8 @@
 <?php namespace Comodojo\Installer\Configuration;
 
+use \Comodojo\Exception\InstallerException;
+use \Exception;
+
 /**
  * Comodojo Installer
  *
@@ -23,6 +26,30 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-class Generator {
+class ExtenderConfiguration {
 
+    public static function addTask($task) {
+        
+    }
+    
+    public static function removeTask($task) {
+        
+    }
+    
+    public static function addPlugin($plugin) {
+        
+    }
+    
+    public static function removePlugin($plugin) {
+        
+    }
+    
+    public static function addCommand($command) {
+        
+    }
+    
+    public static function removeCommand($command) {
+        
+    }
+    
 }

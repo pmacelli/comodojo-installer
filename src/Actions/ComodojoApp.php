@@ -27,7 +27,11 @@ class ComodojoApp extends AbstractAction {
 
     public function install($package_extra) {
 
-
+        $this->copyAssets($package_extra);
+        
+        $this->publishRoutes($package_extra);
+        
+        $this->publishCommands($package_extra);
 
     }
 

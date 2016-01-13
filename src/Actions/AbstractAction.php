@@ -32,7 +32,7 @@ abstract class AbstractAction implements ActionInterface {
 
     private $io;
 
-    public function __construct(Composer $composer, IOInterface, $io) {
+    public function __construct(Composer $composer, IOInterface $io) {
 
         $this->composer = $composer;
 
@@ -45,5 +45,17 @@ abstract class AbstractAction implements ActionInterface {
     abstract public function update($initial_extra, $target_extra);
 
     abstract public function uninstall($package_extra);
+    
+    public function getIO() {
+        
+        return $this->io;
+        
+    }
+    
+    public function getComposer() {
+        
+        return $this->composer;
+        
+    }
 
 }
