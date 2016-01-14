@@ -26,37 +26,41 @@
 class SupportedTypes {
 
     private static $supported_actions_by_type = array(
-        
+
         'extender-plugins-bundle' => array(
             "comodojo-plugins-load" => "ExtenderPlugin",
             "extender-plugin-load" => "ExtenderPlugin"
         ),
-        
+
 	    'extender-tasks-bundle' => array(
             "comodojo-tasks-register" => "ExtenderTask",
             "extender-task-register" => "ExtenderTask"
         ),
-        
+
 	    'extender-commands-bundle' => array(
             "comodojo-commands-register" => "ExtenderCommand",
             "extender-command-register" => "ExtenderCommand"
         ),
-        
+
 	    'dispatcher-plugin' => array(
             "comodojo-plugin-load" => "DispatcherPlugin",
             "dispatcher-plugin-load" => "DispatcherPlugin"
         ),
-        
+
 	    'dispatcher-service-bundle' => array(
             "comodojo-service-route" => "DispatcherService",
             "dispatcher-service-route" => "DispatcherService"
         ),
-        
+
         'comodojo-app' => array(
             "comodojo-app-register" => "ComodojoApp",
-            "comodojo-configuration-register" => "ComodojoConfiguration"
+            "comodojo-configuration-register" => "ComodojoSetting",
+            "comodojo-rpc-register" => "ComodojoRpc",
+            "comodojo-service-route" => "DispatcherService",
+            "comodojo-task-register" => "ExtenderTask",
+            "comodojo-command-register" => "ExtenderCommand"
         ),
-        
+
 	    'comodojo-bundle' => array(
             "dispatcher-plugin-load" => "DispatcherPlugin",
             "dispatcher-service-route" => "DispatcherService",
@@ -64,21 +68,25 @@ class SupportedTypes {
             "extender-command-register" => "ExtenderCommand",
             "extender-task-register" => "ExtenderTask",
             "comodojo-app-register" => "ComodojoApp",
-            "comodojo-configuration-register" => "ComodojoConfiguration"
+            "comodojo-configuration-register" => "ComodojoSetting",
+            "comodojo-rpc-register" => "ComodojoRpc",
+            "comodojo-service-route" => "DispatcherService",
+            "comodojo-task-register" => "ExtenderTask",
+            "comodojo-command-register" => "ExtenderCommand"
         )
-        
+
     );
 
     public static function getTypes() {
-        
+
         return array_keys(self::$supported_actions_by_type);
-        
+
     }
-    
+
     public static function getActions($type) {
-        
+
         return isset(self::$supported_actions_by_type[$type]) ? self::$supported_actions_by_type[$type] : array();
-        
+
     }
 
 }

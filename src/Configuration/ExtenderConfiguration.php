@@ -1,6 +1,8 @@
 <?php namespace Comodojo\Installer\Configuration;
 
 use \Comodojo\Exception\InstallerException;
+use \Comodojo\Configuration\Extender;
+use \Comodojo\Exception\ConfigurationException;
 use \Exception;
 
 /**
@@ -29,27 +31,115 @@ use \Exception;
 class ExtenderConfiguration {
 
     public static function addTask($task) {
-        
+
+        try {
+
+            Extender::addTask($task['name'], $task['class'], empty($task['description']) ? null, $task['description']);
+
+        } catch (ConfigurationException $ce) {
+
+            throw $ce;
+
+        }
+
     }
-    
+
     public static function removeTask($task) {
-        
+
+        try {
+
+            Extender::removeTask($task['name']);
+
+        } catch (ConfigurationException $ce) {
+
+            throw $ce;
+
+        }
+
     }
-    
+
     public static function addPlugin($plugin) {
-        
+
+        try {
+
+            Extender::addPlugin($plugin['event'], $plugin['class'], empty($plugin['method']) ? null : $plugin['method']);
+
+        } catch (ConfigurationException $ce) {
+
+            throw $ce;
+
+        }
+
     }
-    
+
     public static function removePlugin($plugin) {
-        
+
+        try {
+
+            Extender::removePlugin($task['event'], $task['class'], empty($task['method']) ? null : $task['method']);
+
+        } catch (ConfigurationException $ce) {
+
+            throw $ce;
+
+        }
+
     }
-    
-    public static function addCommand($command) {
-        
+
+    public static function addCommand($command, $actions) {
+
+        $class = $actions["class"];
+
+        $description = empty($actions["description"]) ? null : $actions["description"];
+
+        $aliases = array();
+
+        if ( isset($actions["aliases"]) && @is_array($actions["aliases"]) ) {
+
+            foreach ($actions["aliases"] as $alias) array_push($aliases, $alias);
+
+        }
+
+        $options = array();
+
+        if ( isset($actions["options"]) && @is_array($actions["options"]) ) {
+
+            foreach ($actions["options"] as $option => $oparameters) $options[$option] = $oparameters;
+
+        }
+
+        $arguments = array();
+
+        if ( isset($actions["arguments"]) && @is_array($actions["arguments"]) ) {
+
+            foreach ($actions["arguments"] as $argument => $aparameters) $arguments[$argument] = $aparameters;
+
+        }
+
+        try {
+
+            Extender::addCommand($command, $class, $description, $aliases, $options, $arguments);
+
+        } catch (ConfigurationException $ce) {
+
+            throw $ce;
+
+        }
+
     }
-    
+
     public static function removeCommand($command) {
-        
+
+        try {
+
+            Extender::removeCommand($command);
+
+        } catch (ConfigurationException $ce) {
+
+            throw $ce;
+
+        }
+
     }
-    
+
 }

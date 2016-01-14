@@ -23,7 +23,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-class ComodojoConfiguration extends AbstractAction {
+class ComodojoSetting extends AbstractAction {
 
     public function install($package_extra) {
 

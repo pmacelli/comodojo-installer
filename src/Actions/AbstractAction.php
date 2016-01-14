@@ -40,22 +40,22 @@ abstract class AbstractAction implements ActionInterface {
 
     }
 
-    abstract public function install($package_extra);
+    abstract public function install($package_name, $package_extra);
 
-    abstract public function update($initial_extra, $target_extra);
+    abstract public function update($package_name, $initial_extra, $target_extra);
 
-    abstract public function uninstall($package_extra);
-    
+    abstract public function uninstall($package_name, $package_extra);
+
     public function getIO() {
-        
+
         return $this->io;
-        
+
     }
-    
+
     public function getComposer() {
-        
+
         return $this->composer;
-        
+
     }
 
 }

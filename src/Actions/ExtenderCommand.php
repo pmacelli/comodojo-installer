@@ -32,19 +32,19 @@ class ExtenderCommand extends AbstractAction {
     public function install($package_name, $package_extra) {
 
         foreach ($package_extra as $command => $actions) {
-            
+
             try {
-                
+
                 if ( !self::validateCommand($actions) ) throw new InstallerException('Skipping invalid command '.$command.' in '.$package_name);
-            
+
                 ExtenderConfiguration::addCommand($command, $actions);
-               
+
             } catch (Exception $e) {
-                
+
                 $this->getIO()->write('<error>'.$e->getMessage().'</error>');
-                
+
             }
-            
+
         }
 
     }
@@ -52,7 +52,7 @@ class ExtenderCommand extends AbstractAction {
     public function update($package_name, $initial_extra, $target_extra) {
 
         $this->uninstall($package_name, $initial_extra);
-        
+
         $this->install($package_name, $target_extra);
 
     }
@@ -60,27 +60,27 @@ class ExtenderCommand extends AbstractAction {
     public function uninstall($package_name, $package_extra) {
 
         foreach ($package_extra as $command => $actions) {
-            
+
             try {
-                
+
                 if ( !self::validateCommand($actions) ) throw new InstallerException('Skipping invalid command '.$command.' in '.$package_name);
-            
-                ExtenderConfiguration::removeCommand($command, $actions);
-               
+
+                ExtenderConfiguration::removeCommand($command);
+
             } catch (Exception $e) {
-                
+
                 $this->getIO()->write('<error>'.$e->getMessage().'</error>');
-                
+
             }
-            
+
         }
 
     }
-    
+
     private static function validateCommand($actions) {
-        
+
         return !empty($actions["class"]);
-        
+
     }
 
 }

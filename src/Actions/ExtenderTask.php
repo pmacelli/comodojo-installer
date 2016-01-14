@@ -32,19 +32,19 @@ class ExtenderTask extends AbstractAction {
     public function install($package_name, $package_extra) {
 
         foreach ($package_extra as $task) {
-            
+
             try {
-                
+
                 if ( !self::validateTask($task) ) throw new InstallerException('Skipping invalid task in '.$package_name);
-            
+
                 ExtenderConfiguration::addTask($task);
-               
+
             } catch (Exception $e) {
-                
+
                 $this->getIO()->write('<error>'.$e->getMessage().'</error>');
-                
+
             }
-            
+
         }
 
     }
@@ -60,27 +60,27 @@ class ExtenderTask extends AbstractAction {
     public function uninstall($package_name, $package_extra) {
 
         foreach ($package_extra as $task) {
-            
+
             try {
-                
+
                 if ( !self::validateTask($task) ) throw new InstallerException('Skipping invalid task in '.$package_name);
-            
+
                 ExtenderConfiguration::removeTask($task);
-               
+
             } catch (Exception $e) {
-                
+
                 $this->getIO()->write('<error>'.$e->getMessage().'</error>');
-                
+
             }
-            
+
         }
 
     }
-    
+
     private static function validateTask($task) {
-        
+
         return !( empty($task["name"]) || empty($task["class"]) );
-        
+
     }
 
 }
