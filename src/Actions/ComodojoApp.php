@@ -1,5 +1,9 @@
 <?php namespace Comodojo\Installer\Actions;
 
+use \Comodojo\Installer\Configuration\AppConfiguration;
+use \Comodojo\Exception\InstallerException;
+use \Exception;
+
 /**
  * Comodojo Installer
  *
@@ -25,25 +29,89 @@
 
 class ComodojoApp extends AbstractAction {
 
-    public function install($package_extra) {
+    public function install($package_name, $package_extra) {
 
-        $this->copyAssets($package_extra);
+        $io = $this->getIO();
 
-        $this->publishRoutes($package_extra);
+        $io->write("<info>>>> Installing app ".$package_name."</info>");
 
-        $this->publishCommands($package_extra);
-
-    }
-
-    public function update($initial_extra, $target_extra) {
-
-
+        self::processApp($io, 'install', $package_name, $package_extra);
 
     }
 
-    public function uninstall($package_extra) {
+    public function update($package_name, $initial_extra, $target_extra) {
 
+        $io = $this->getIO();
 
+        $io->write("<info>>>> Updating app ".$package_name."</info>");
+
+        self::processApp($io, 'uninstall', $package_name, $package_extra);
+
+        self::processApp($io, 'install', $package_name, $package_extra);
+
+    }
+
+    public function uninstall($package_name, $package_extra) {
+
+        $io = $this->getIO();
+
+        $io->write("<info>>>> Removing app ".$package_name."</info>");
+
+        self::processApp($io, 'uninstall', $package_name, $package_extra);
+
+    }
+
+    private static function processApp($io, $action, $package_name, $package_extra) {
+
+        foreach ($package_extra as $app) {
+
+            try {
+
+                if ( !self::validateApp($app) ) throw new InstallerException('Skipping invalid app '.$package_name);
+
+                $description = isset($app['description']) ? $app['description'] : null;
+
+                switch ($action) {
+
+                    case 'install':
+
+                        self::copyAssets($app["assets"]);
+
+                        AppConfiguration::registerApp($app['name'], $app['description']);
+
+                        $io->write(" <info>+</info> added app ".$package_name." (".$app['name'].")");
+
+                        break;
+
+                    case 'uninstall':
+
+                        self::deleteAssets($app["assets"]);
+
+                        AppConfiguration::removeApp($app['name'], $app['description']);
+
+                        $io->write(" <comment>-</comment> removed app ".$package_name." (".$app['name'].")");
+
+                        break;
+
+                }
+
+            } catch (Exception $e) {
+
+                $io->write('<error>Error processing app: '.$e->getMessage().'</error>');
+
+            }
+
+        }
+
+    }
+
+    private static function copyAssets($assets) {
+
+    }
+
+    private static function validateApp($app) {
+
+        return !( empty($app["name"]) || empty($app["assets"]) );
 
     }
 

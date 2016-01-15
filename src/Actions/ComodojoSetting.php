@@ -1,5 +1,9 @@
 <?php namespace Comodojo\Installer\Actions;
 
+use \Comodojo\Installer\Configuration\ComodojoConfiguration;
+use \Comodojo\Exception\InstallerException;
+use \Exception;
+
 /**
  * Comodojo Installer
  *
@@ -25,21 +29,79 @@
 
 class ComodojoSetting extends AbstractAction {
 
-    public function install($package_extra) {
+    public function install($package_name, $package_extra) {
 
+        $io = $this->getIO();
 
+        $io->write("<info>>>> Installing setting from package ".$package_name."</info>");
 
-    }
-
-    public function update($initial_extra, $target_extra) {
-
-
+        self::processSetting($io, 'install', $package_name, $package_extra);
 
     }
 
-    public function uninstall($package_extra) {
+    public function update($package_name, $initial_extra, $target_extra) {
 
+        $io = $this->getIO();
 
+        $io->write("<info>>>> Updating setting from package ".$package_name."</info>");
+
+        self::processSetting($io, 'uninstall', $package_name, $package_extra);
+
+        self::processSetting($io, 'install', $package_name, $package_extra);
+
+    }
+
+    public function uninstall($package_name, $package_extra) {
+
+        $io = $this->getIO();
+
+        $io->write("<info>>>> Removing setting from package ".$package_name."</info>");
+
+        self::processSetting($io, 'uninstall', $package_name, $package_extra);
+
+    }
+
+    private static function processSetting($io, $action, $package_name, $package_extra) {
+
+        foreach ($package_extra as $setting => $value) {
+
+            try {
+
+                if ( !self::validateSetting($value) ) throw new InstallerException('Skipping invalid setting '.$setting.' in '.$package_name);
+
+                switch ($action) {
+
+                    case 'install':
+
+                        ComodojoConfiguration::addSetting($setting, $value);
+
+                        $io->write(" <info>+</info> added setting ".$setting);
+
+                        break;
+
+                    case 'uninstall':
+
+                        ComodojoConfiguration::removeSetting($setting, $value);
+
+                        $io->write(" <comment>-</comment> removed setting ".$setting);
+
+                        break;
+
+                }
+
+            } catch (Exception $e) {
+
+                $io->write('<error>Error processing setting: '.$e->getMessage().'</error>');
+
+            }
+
+        }
+
+    }
+
+    private static function validateSetting($value) {
+
+        return is_scalar($value);
 
     }
 

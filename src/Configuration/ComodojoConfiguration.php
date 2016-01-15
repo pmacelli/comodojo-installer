@@ -1,7 +1,7 @@
 <?php namespace Comodojo\Installer\Configuration;
 
 use \Comodojo\Exception\InstallerException;
-use \Comodojo\Configuration\Dispatcher;
+use \Comodojo\Configuration\Settings;
 use \Comodojo\Exception\ConfigurationException;
 use \Exception;
 
@@ -28,15 +28,13 @@ use \Exception;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-class DispatcherConfiguration {
+class ComodojoConfiguration {
 
-    public static function addRoute($service) {
-
-        $parameters = ( empty($service['parameters']) !is_array($service['parameters'] ) ? array() : $service['parameters'];
+    public static function addSetting($setting, $value) {
 
         try {
 
-            Dispatcher::addRoute($service['name'], $service['path'], $service['type'], $service['target'], $parameters);
+            Settings::addSetting($setting, $value);
 
         } catch (ConfigurationException $ce) {
 
@@ -46,39 +44,11 @@ class DispatcherConfiguration {
 
     }
 
-    public static function removeRoute($service) {
+    public static function removeSetting($setting, $value) {
 
         try {
 
-            Dispatcher::removeRoute($service['name'], $service['path'], $service['type'], $service['target']);
-
-        } catch (ConfigurationException $ce) {
-
-            throw $ce;
-
-        }
-
-    }
-
-    public static function addPlugin($plugin) {
-
-        try {
-
-            Dispatcher::addPlugin($plugin['event'], $plugin['class'], empty($plugin['method']) ? null : $plugin['method']);
-
-        } catch (ConfigurationException $ce) {
-
-            throw $ce;
-
-        }
-
-    }
-
-    public static function removePlugin($plugin) {
-
-        try {
-
-            Dispatcher::removePlugin($task['event'], $task['class'], empty($task['method']) ? null : $task['method']);
+            Settings::removeSetting($setting, $value);
 
         } catch (ConfigurationException $ce) {
 

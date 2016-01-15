@@ -35,7 +35,7 @@ class ExtenderPlugin extends AbstractAction {
 
         $io->write("<info>>>> Installing (extender) plugins from package ".$package_name."</info>");
 
-        self::processPlugin($io, 'install', $package_extra);
+        self::processPlugin($io, 'install', $package_name, $package_extra);
 
     }
 
@@ -45,9 +45,9 @@ class ExtenderPlugin extends AbstractAction {
 
         $io->write("<info>>>> Updating (extender) plugins from package ".$package_name."</info>");
 
-        $this->uninstall($package_name, $initial_extra);
+        self::processPlugin($io, 'uninstall', $package_name, $package_extra);
 
-        $this->install($package_name, $target_extra);
+        self::processPlugin($io, 'install', $package_name, $package_extra);
 
     }
 
@@ -57,11 +57,11 @@ class ExtenderPlugin extends AbstractAction {
 
         $io->write("<info>>>> Removing (extender) plugins from package ".$package_name."</info>");
 
-        self::processPlugin($io, 'uninstall', $package_extra);
+        self::processPlugin($io, 'uninstall', $package_name, $package_extra);
 
     }
 
-    private static function processPlugin($io, $action, $package_extra) {
+    private static function processPlugin($io, $action, $package_name, $package_extra) {
 
         foreach ($package_extra as $plugin) {
 
@@ -91,7 +91,7 @@ class ExtenderPlugin extends AbstractAction {
 
             } catch (Exception $e) {
 
-                $io->write('<error>'.$e->getMessage().'</error>');
+                $io->write('<error>Error processing plugin: '.$e->getMessage().'</error>');
 
             }
 

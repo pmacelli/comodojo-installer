@@ -31,33 +31,37 @@ class ExtenderTask extends AbstractAction {
 
     public function install($package_name, $package_extra) {
 
-        foreach ($package_extra as $task) {
+        $io = $this->getIO();
 
-            try {
+        $io->write("<info>>>> Installing (extender) tasks from package ".$package_name."</info>");
 
-                if ( !self::validateTask($task) ) throw new InstallerException('Skipping invalid task in '.$package_name);
-
-                ExtenderConfiguration::addTask($task);
-
-            } catch (Exception $e) {
-
-                $this->getIO()->write('<error>'.$e->getMessage().'</error>');
-
-            }
-
-        }
+        self::processTask($io, 'install', $package_name, $package_extra);
 
     }
 
     public function update($package_name, $initial_extra, $target_extra) {
 
-        $this->uninstall($package_name, $initial_extra);
-        
-        $this->install($package_name, $target_extra);
+        $io = $this->getIO();
+
+        $io->write("<info>>>> Updating (extender) tasks from package ".$package_name."</info>");
+
+        self::processTask($io, 'uninstall', $package_name, $package_extra);
+
+        self::processTask($io, 'install', $package_name, $package_extra);
 
     }
 
     public function uninstall($package_name, $package_extra) {
+
+        $io = $this->getIO();
+
+        $io->write("<info>>>> Removing (extender) tasks from package ".$package_name."</info>");
+
+        self::processTask($io, 'uninstall', $package_name, $package_extra);
+
+    }
+
+    private static function processTask($io, $action, $package_name, $package_extra) {
 
         foreach ($package_extra as $task) {
 
@@ -65,11 +69,29 @@ class ExtenderTask extends AbstractAction {
 
                 if ( !self::validateTask($task) ) throw new InstallerException('Skipping invalid task in '.$package_name);
 
-                ExtenderConfiguration::removeTask($task);
+                switch ($action) {
+
+                    case 'install':
+
+                        ExtenderConfiguration::addTask($task);
+
+                        $io->write(" <info>+</info> enabled task ".$task["name"]);
+
+                        break;
+
+                    case 'uninstall':
+
+                        ExtenderConfiguration::removePlugin($plugin);
+
+                        $io->write(" <comment>-</comment> disabled task ".$task["name"]);
+
+                        break;
+
+                }
 
             } catch (Exception $e) {
 
-                $this->getIO()->write('<error>'.$e->getMessage().'</error>');
+                $io->write('<error>Error processing task: '.$e->getMessage().'</error>');
 
             }
 

@@ -33,25 +33,9 @@ class DispatcherPlugin extends AbstractAction {
 
         $io = $this->getIO();
 
-        $io->write(">>> Enabling plugins (dispatcher) from package ".$package_name);
+        $io->write("<info>>>> Installing (dispatcher) plugins from package ".$package_name."</info>");
 
-        foreach ($package_extra as $plugin) {
-
-            try {
-
-                if ( !self::validatePlugin($plugin) ) throw new InstallerException('Skipping invalid dispatcher plugin in '.$package_name);
-
-                DispatcherConfiguration::addPlugin($plugin);
-
-                $io->write("+ Enabled plugin ".$plugin["class"]."::".$plugin["method"]." on event ".$plugin["event"]);
-
-            } catch (Exception $e) {
-
-                $this->getIO()->write('<error>'.$e->getMessage().'</error>', false);
-
-            }
-
-        }
+        self::processPlugin($io, 'install', $package_name, $package_extra);
 
     }
 
@@ -59,15 +43,25 @@ class DispatcherPlugin extends AbstractAction {
 
         $io = $this->getIO();
 
-        $io->write(">>> Updating plugins of package ".$package_name);
+        $io->write("<info>>>> Updating (dispatcher) plugins from package ".$package_name."</info>");
 
-        $this->uninstall($package_name, $initial_extra);
+        self::processPlugin($io, 'uninstall', $package_name, $package_extra);
 
-        $this->install($package_name, $target_extra);
+        self::processPlugin($io, 'install', $package_name, $package_extra);
 
     }
 
     public function uninstall($package_name, $package_extra) {
+
+        $io = $this->getIO();
+
+        $io->write("<info>>>> Removing (dispatcher) plugins from package ".$package_name."</info>");
+
+        self::processPlugin($io, 'uninstall', $package_name, $package_extra);
+
+    }
+
+    private static function processPlugin($io, $action, $package_name, $package_extra) {
 
         foreach ($package_extra as $plugin) {
 
@@ -75,11 +69,29 @@ class DispatcherPlugin extends AbstractAction {
 
                 if ( !self::validatePlugin($plugin) ) throw new InstallerException('Skipping invalid plugin in '.$package_name);
 
-                ExtenderConfiguration::removePlugin($plugin);
+                switch ($action) {
+
+                    case 'install':
+
+                        DispatcherConfiguration::addPlugin($plugin);
+
+                        $io->write(" <info>+</info> enabled plugin ".$plugin["class"]."::".$plugin["method"]." on event ".$plugin["event"]);
+
+                        break;
+
+                    case 'uninstall':
+
+                        DispatcherConfiguration::removePlugin($plugin);
+
+                        $io->write(" <comment>-</comment> disabled plugin ".$plugin["class"]."::".$plugin["method"]." on event ".$plugin["event"]);
+
+                        break;
+
+                }
 
             } catch (Exception $e) {
 
-                $this->getIO()->write('<error>'.$e->getMessage().'</error>');
+                $io->write('<error>Error processing plugin: '.$e->getMessage().'</error>');
 
             }
 

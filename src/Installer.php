@@ -80,13 +80,15 @@ class Installer extends LibraryInstaller {
 
         $actions_map = Parser::parse($package);
 
+        $package_name = $package->getPrettyName();
+
         foreach ($actions_map as $action_class => $extra) {
 
             $action_fqcn = 'Comodojo\\Installer\\Actions\\' . $action_class;
 
             $action = new $action_fqcn($this->composer, $this->io);
 
-            $action->install($extra);
+            $action->install($package_name, $extra);
 
         }
 
@@ -96,13 +98,15 @@ class Installer extends LibraryInstaller {
 
         $actions_map = Parser::parse($package);
 
+        $package_name = $package->getPrettyName();
+
         foreach ($actions_map as $action_class => $extra) {
 
             $action_fqcn = 'Comodojo\\Installer\\Actions\\' . $action_class;
 
             $action = new $action_fqcn($this->composer, $this->io);
 
-            $action->uninstall($extra);
+            $action->uninstall($package_name, $extra);
 
         }
 
@@ -113,6 +117,10 @@ class Installer extends LibraryInstaller {
         $initial_actions_map = Parser::parse($initial);
 
         $target_actions_map = Parser::parse($target);
+
+        $initial_package_name = $initial->getPrettyName();
+
+        $target_package_name = $target->getPrettyName();
 
         $initial_actions = array_keys($initial_actions_map);
 
@@ -130,7 +138,7 @@ class Installer extends LibraryInstaller {
 
             $action = new $action_fqcn($this->composer, $this->io);
 
-            $action->uninstall($initial_actions_map[$action_uninstall]);
+            $action->uninstall($initial_package_name, $initial_actions_map[$action_uninstall]);
 
         }
 
@@ -140,7 +148,7 @@ class Installer extends LibraryInstaller {
 
             $action = new $action_fqcn($this->composer, $this->io);
 
-            $action->install($target_actions_map[$action_install]);
+            $action->install($target_package_name, $target_actions_map[$action_install]);
 
         }
 
@@ -150,7 +158,7 @@ class Installer extends LibraryInstaller {
 
             $action = new $action_fqcn($this->composer, $this->io);
 
-            $action->update($initial_actions_map[$action_update], $target_actions_map[$action_update]);
+            $action->update($target_package_name, $initial_actions_map[$action_update], $target_actions_map[$action_update]);
 
         }
 

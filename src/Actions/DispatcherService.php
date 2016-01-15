@@ -25,21 +25,79 @@
 
 class DispatcherService extends AbstractAction {
 
-    public function install($package_extra) {
+    public function install($package_name, $package_extra) {
 
+        $io = $this->getIO();
 
+        $io->write("<info>>>> Installing (dispatcher) services from package ".$package_name."</info>");
 
-    }
-
-    public function update($initial_extra, $target_extra) {
-
-
+        self::processService($io, 'install', $package_name, $package_extra);
 
     }
 
-    public function uninstall($package_extra) {
+    public function update($package_name, $initial_extra, $target_extra) {
 
+        $io = $this->getIO();
 
+        $io->write("<info>>>> Updating (dispatcher) services from package ".$package_name."</info>");
+
+        self::processService($io, 'uninstall', $package_name, $package_extra);
+
+        self::processService($io, 'install', $package_name, $package_extra);
+
+    }
+
+    public function uninstall($package_name, $package_extra) {
+
+        $io = $this->getIO();
+
+        $io->write("<info>>>> Removing (dispatcher) services from package ".$package_name."</info>");
+
+        self::processService($io, 'uninstall', $package_name, $package_extra);
+
+    }
+
+    private static function processService($io, $action, $package_name, $package_extra) {
+
+        foreach ($package_extra as $service) {
+
+            try {
+
+                if ( !self::validateService($service) ) throw new InstallerException('Skipping invalid service in '.$package_name);
+
+                switch ($action) {
+
+                    case 'install':
+
+                        DispatcherConfiguration::addRoute($service);
+
+                        $io->write(" <info>+</info> enabled service ".$service["name"]." (".$service["type"].")");
+
+                        break;
+
+                    case 'uninstall':
+
+                        DispatcherConfiguration::removeRoute($service);
+
+                        $io->write(" <comment>-</comment> disabled service ".$service["name"]." (".$service["type"].")");
+
+                        break;
+
+                }
+
+            } catch (Exception $e) {
+
+                $io->write('<error>Error processing service: '.$e->getMessage().'</error>');
+
+            }
+
+        }
+
+    }
+
+    private static function validateService($service) {
+
+        return !( empty($service["name"]) || empty($service["path"]) || empty($service["type"]) || empty($service["target"]) );
 
     }
 

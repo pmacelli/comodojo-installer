@@ -61,6 +61,10 @@ class SupportedTypes {
             "comodojo-command-register" => "ExtenderCommand"
         ),
 
+        'comodojo-theme' => array(
+            "comodojo-theme-register" => "ComodojoTheme"
+        ),
+
 	    'comodojo-bundle' => array(
             "dispatcher-plugin-load" => "DispatcherPlugin",
             "dispatcher-service-route" => "DispatcherService",
@@ -72,7 +76,8 @@ class SupportedTypes {
             "comodojo-rpc-register" => "ComodojoRpc",
             "comodojo-service-route" => "DispatcherService",
             "comodojo-task-register" => "ExtenderTask",
-            "comodojo-command-register" => "ExtenderCommand"
+            "comodojo-command-register" => "ExtenderCommand",
+            "comodojo-theme-register" => "ComodojoTheme"
         )
 
     );

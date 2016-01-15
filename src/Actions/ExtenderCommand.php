@@ -31,33 +31,37 @@ class ExtenderCommand extends AbstractAction {
 
     public function install($package_name, $package_extra) {
 
-        foreach ($package_extra as $command => $actions) {
+        $io = $this->getIO();
 
-            try {
+        $io->write("<info>>>> Installing (extender) commands from package ".$package_name."</info>");
 
-                if ( !self::validateCommand($actions) ) throw new InstallerException('Skipping invalid command '.$command.' in '.$package_name);
-
-                ExtenderConfiguration::addCommand($command, $actions);
-
-            } catch (Exception $e) {
-
-                $this->getIO()->write('<error>'.$e->getMessage().'</error>');
-
-            }
-
-        }
+        self::processCommand($io, 'install', $package_name, $package_extra);
 
     }
 
     public function update($package_name, $initial_extra, $target_extra) {
 
-        $this->uninstall($package_name, $initial_extra);
+        $io = $this->getIO();
 
-        $this->install($package_name, $target_extra);
+        $io->write("<info>>>> Updating (extender) commands from package ".$package_name."</info>");
+
+        self::processCommand($io, 'uninstall', $package_name, $package_extra);
+
+        self::processCommand($io, 'install', $package_name, $package_extra);
 
     }
 
     public function uninstall($package_name, $package_extra) {
+
+        $io = $this->getIO();
+
+        $io->write("<info>>>> Removing (extender) commands from package ".$package_name."</info>");
+
+        self::processCommand($io, 'uninstall', $package_name, $package_extra);
+
+    }
+
+    private static function processCommand($io, $action, $package_name, $package_extra) {
 
         foreach ($package_extra as $command => $actions) {
 
@@ -65,11 +69,29 @@ class ExtenderCommand extends AbstractAction {
 
                 if ( !self::validateCommand($actions) ) throw new InstallerException('Skipping invalid command '.$command.' in '.$package_name);
 
-                ExtenderConfiguration::removeCommand($command);
+                switch ($action) {
+
+                    case 'install':
+
+                        ExtenderConfiguration::addCommand($command, $actions);
+
+                        $io->write(" <info>+</info> enabled command ".$command);
+
+                        break;
+
+                    case 'uninstall':
+
+                        ExtenderConfiguration::removeCommand($command);
+
+                        $io->write(" <comment>-</comment> disabled command ".$command);
+
+                        break;
+
+                }
 
             } catch (Exception $e) {
 
-                $this->getIO()->write('<error>'.$e->getMessage().'</error>');
+                $io->write('<error>Error processing command: '.$e->getMessage().'</error>');
 
             }
 
