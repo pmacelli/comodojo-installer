@@ -81,6 +81,8 @@ class Installer extends LibraryInstaller {
         $actions_map = Parser::parse($package);
 
         $package_name = $package->getPrettyName();
+        
+        $package_path = $this->composer->getInstallationManager()->getInstallPath($package);
 
         foreach ($actions_map as $action_class => $extra) {
 
@@ -99,6 +101,8 @@ class Installer extends LibraryInstaller {
         $actions_map = Parser::parse($package);
 
         $package_name = $package->getPrettyName();
+        
+        $package_path = $this->composer->getInstallationManager()->getInstallPath($package);
 
         foreach ($actions_map as $action_class => $extra) {
 
@@ -121,7 +125,11 @@ class Installer extends LibraryInstaller {
         $initial_package_name = $initial->getPrettyName();
 
         $target_package_name = $target->getPrettyName();
-
+        
+        $initial_package_path = $this->composer->getInstallationManager()->getInstallPath($initial);
+        
+        $target_package_path = $this->composer->getInstallationManager()->getInstallPath($target);
+        
         $initial_actions = array_keys($initial_actions_map);
 
         $target_actions = array_keys($target_actions_map);
@@ -136,7 +144,7 @@ class Installer extends LibraryInstaller {
 
             $action_fqcn = 'Comodojo\\Installer\\Actions\\' . $action_uninstall;
 
-            $action = new $action_fqcn($this->composer, $this->io);
+            $action = new $action_fqcn($this->composer, $this->io, $initial_package_path);
 
             $action->uninstall($initial_package_name, $initial_actions_map[$action_uninstall]);
 
@@ -146,7 +154,7 @@ class Installer extends LibraryInstaller {
 
             $action_fqcn = 'Comodojo\\Installer\\Actions\\' . $action_install;
 
-            $action = new $action_fqcn($this->composer, $this->io);
+            $action = new $action_fqcn($this->composer, $this->io, $target_package_path);
 
             $action->install($target_package_name, $target_actions_map[$action_install]);
 
@@ -156,7 +164,7 @@ class Installer extends LibraryInstaller {
 
             $action_fqcn = 'Comodojo\\Installer\\Actions\\' . $action_update;
 
-            $action = new $action_fqcn($this->composer, $this->io);
+            $action = new $action_fqcn($this->composer, $this->io, $target_package_path);
 
             $action->update($target_package_name, $initial_actions_map[$action_update], $target_actions_map[$action_update]);
 

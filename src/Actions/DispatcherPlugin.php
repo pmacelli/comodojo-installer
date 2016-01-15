@@ -73,7 +73,7 @@ class DispatcherPlugin extends AbstractAction {
 
                     case 'install':
 
-                        DispatcherConfiguration::addPlugin($plugin);
+                        DispatcherConfiguration::addPlugin($package_name, $plugin);
 
                         $io->write(" <info>+</info> enabled plugin ".$plugin["class"]."::".$plugin["method"]." on event ".$plugin["event"]);
 
@@ -81,7 +81,7 @@ class DispatcherPlugin extends AbstractAction {
 
                     case 'uninstall':
 
-                        DispatcherConfiguration::removePlugin($plugin);
+                        DispatcherConfiguration::removePlugin($package_name, $plugin);
 
                         $io->write(" <comment>-</comment> disabled plugin ".$plugin["class"]."::".$plugin["method"]." on event ".$plugin["event"]);
 

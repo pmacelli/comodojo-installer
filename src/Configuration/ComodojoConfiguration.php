@@ -2,6 +2,11 @@
 
 use \Comodojo\Exception\InstallerException;
 use \Comodojo\Configuration\Settings;
+use \Comodojo\Configuration\Themes;
+use \Comodojo\Configuration\Rpc;
+use \Comodojo\Configuration\Apps;
+use \Comodojo\Configuration\Authentication;
+use \Comodojo\Installer\Configuration\Filesystem;
 use \Comodojo\Exception\ConfigurationException;
 use \Exception;
 
@@ -30,11 +35,11 @@ use \Exception;
 
 class ComodojoConfiguration {
 
-    public static function addSetting($setting, $value) {
+    public static function addSetting($package_name, $setting, $value) {
 
         try {
 
-            Settings::addSetting($setting, $value);
+            Settings::addSetting($setting, $value, $package_name);
 
         } catch (ConfigurationException $ce) {
 
@@ -44,11 +49,11 @@ class ComodojoConfiguration {
 
     }
 
-    public static function removeSetting($setting, $value) {
+    public static function removeSetting($package_name, $setting, $value) {
 
         try {
 
-            Settings::removeSetting($setting, $value);
+            Settings::removeSetting($setting, $value, $package_name);
 
         } catch (ConfigurationException $ce) {
 
@@ -56,6 +61,222 @@ class ComodojoConfiguration {
 
         }
 
+    }
+    
+    public static function addTheme($package_name, $theme, $path) {
+
+        $description = empty($theme['description']) ? null : $theme['description'];
+        
+        $fs = new Filesystem();
+        
+        $assets = $theme['assets'];
+
+        try {
+
+            Themes::addTheme($theme['name'], $description, $package_name);
+            
+            $fs->rcopy($path.'/'.$assets, COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_THEME_ASSETS.'/'.$name);
+
+        } catch (ConfigurationException $ce) {
+
+            throw $ce;
+
+        }
+
+    }
+
+    public static function removeTheme($package_name, $theme) {
+
+        $description = empty($theme['description']) ? null : $theme['description'];
+
+        try {
+
+            $fs->rmdir(COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_THEME_ASSETS.'/'.$name);
+
+            Themes::removeTheme($theme['name'], $description, $package_name);
+
+        } catch (ConfigurationException $ce) {
+
+            throw $ce;
+
+        }
+
+    }
+
+    public static function addRpc($package_name, $rpc) {
+        
+        $name = $rpc['name'];
+        
+        $callback = $rpc['callback'];
+        
+        $method = empty($rpc['method']) ? null : $rpc['method'];
+        
+        $description = empty($rpc['description']) ? null : $rpc['description'];
+        
+        $signatures = empty($rpc['signatures']) ? array() : $rpc['signatures'];
+        
+        try {
+
+            Rpc::addRpc($name, $callback, $method, $description, $signatures, $package_name);
+
+        } catch (ConfigurationException $ce) {
+
+            throw $ce;
+
+        }
+        
+    }
+
+    public static function removeRpc($package_name, $rpc) {
+        
+        $name = $rpc['name'];
+        
+        try {
+
+            Rpc::removeRpc($name, $package_name);
+
+        } catch (ConfigurationException $ce) {
+
+            throw $ce;
+
+        }
+        
+    }
+    
+    public static function addApp($package_name, $app, $path) {
+        
+        $name = $app['name'];
+        
+        $description = empty($app['description']) ? null : $app['description'];
+        
+        $assets = $app['assets'];
+        
+        $fs = new Filesystem();
+        
+        try {
+            
+            Apps::addApp($name, $description, $package_name);
+            
+            $fs->rcopy($path.'/'.$assets, COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_APP_ASSETS.'/'.$name);
+
+        } catch (ConfigurationException $ce) {
+
+            throw $ce;
+
+        } catch (Exception $e) {
+
+            throw $e;
+
+        }
+        
+    }
+    
+    public static function removeApp($package_name, $app, $path) {
+        
+        $name = $app['name'];
+        
+        $fs = new Filesystem();
+        
+        try {
+            
+            $fs->rmdir(COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_APP_ASSETS.'/'.$name);
+            
+            Apps::removeApp($name, $package_name);
+            
+        } catch (ConfigurationException $ce) {
+
+            throw $ce;
+
+        } catch (Exception $e) {
+
+            throw $e;
+
+        }
+        
+    }
+    
+    public static function updateApp($package_name, $app, $path) {
+        
+        $name = $app['name'];
+        
+        $description = empty($app['description']) ? null : $app['description'];
+
+        $fs = new Filesystem();
+        
+        try {
+            
+            $fs->rmdir(COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_APP_ASSETS.'/'.$name);
+            
+            Apps::updateApp($name, $description, $package_name);
+            
+            $fs->rcopy($path.'/'.$assets, COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_APP_ASSETS.'/'.$name);
+            
+        } catch (ConfigurationException $ce) {
+
+            throw $ce;
+
+        } catch (Exception $e) {
+
+            throw $e;
+
+        }
+        
+    }
+
+    public static function addAuthentication($package_name, $auth) {
+        
+        $name = $auth['name'];
+        
+        $description = empty($auth['description']) ? null : $auth['description'];
+        
+        $class = $auth['class'];
+        
+        try {
+            
+            Authentication::addAuthProvider($name, $description, $class, $package_name);
+
+        } catch (ConfigurationException $ce) {
+
+            throw $ce;
+
+        }
+        
+    }
+    
+    public static function removeAuthentication($package_name, $auth) {
+        
+        $name = $auth['name'];
+        
+        try {
+            
+            Authentication::removeAuthProvider($name, $package_name);
+
+        } catch (ConfigurationException $ce) {
+
+            throw $ce;
+
+        }
+        
+    }
+    
+    public static function updateAuthentication($package_name, $auth) {
+        
+        $name = $auth['name'];
+        
+        $description = empty($auth['description']) ? null : $auth['description'];
+        
+        $class = $auth['class'];
+        
+        try {
+            
+            Authentication::updateAuthProvider($name, $description, $class, $package_name);
+
+        } catch (ConfigurationException $ce) {
+
+            throw $ce;
+
+        }
+        
     }
 
 }

@@ -30,13 +30,13 @@ use \Exception;
 
 class DispatcherConfiguration {
 
-    public static function addRoute($service) {
+    public static function addRoute($package_name, $service) {
 
-        $parameters = ( empty($service['parameters']) !is_array($service['parameters'] ) ? array() : $service['parameters'];
+        $parameters = empty($service['parameters']) ? array() : $service['parameters'];
 
         try {
 
-            Dispatcher::addRoute($service['name'], $service['path'], $service['type'], $service['target'], $parameters);
+            Dispatcher::addRoute($service['name'], $service['path'], $service['type'], $service['target'], $parameters, $package_name);
 
         } catch (ConfigurationException $ce) {
 
@@ -46,11 +46,11 @@ class DispatcherConfiguration {
 
     }
 
-    public static function removeRoute($service) {
+    public static function removeRoute($package_name, $service) {
 
         try {
 
-            Dispatcher::removeRoute($service['name'], $service['path'], $service['type'], $service['target']);
+            Dispatcher::removeRoute($service['name'], $service['path'], $service['type'], $service['target'], $package_name);
 
         } catch (ConfigurationException $ce) {
 
@@ -60,11 +60,13 @@ class DispatcherConfiguration {
 
     }
 
-    public static function addPlugin($plugin) {
+    public static function addPlugin($package_name, $plugin) {
 
+        $method = empty($plugin['method']) ? null : $plugin['method'];
+        
         try {
-
-            Dispatcher::addPlugin($plugin['event'], $plugin['class'], empty($plugin['method']) ? null : $plugin['method']);
+            
+            Dispatcher::addPlugin($plugin['event'], $plugin['class'], $method, $package_name);
 
         } catch (ConfigurationException $ce) {
 
@@ -74,11 +76,13 @@ class DispatcherConfiguration {
 
     }
 
-    public static function removePlugin($plugin) {
+    public static function removePlugin($package_name, $plugin) {
+
+        $method = empty($plugin['method']) ? null : $plugin['method'];
 
         try {
 
-            Dispatcher::removePlugin($task['event'], $task['class'], empty($task['method']) ? null : $task['method']);
+            Dispatcher::removePlugin($task['event'], $task['class'], $method, $package_name);
 
         } catch (ConfigurationException $ce) {
 

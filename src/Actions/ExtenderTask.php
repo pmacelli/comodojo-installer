@@ -73,7 +73,7 @@ class ExtenderTask extends AbstractAction {
 
                     case 'install':
 
-                        ExtenderConfiguration::addTask($task);
+                        ExtenderConfiguration::addTask($package_name, $task);
 
                         $io->write(" <info>+</info> enabled task ".$task["name"]);
 
@@ -81,7 +81,7 @@ class ExtenderTask extends AbstractAction {
 
                     case 'uninstall':
 
-                        ExtenderConfiguration::removePlugin($plugin);
+                        ExtenderConfiguration::removeTask($package_name, $task);
 
                         $io->write(" <comment>-</comment> disabled task ".$task["name"]);
 

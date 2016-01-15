@@ -73,7 +73,7 @@ class ExtenderCommand extends AbstractAction {
 
                     case 'install':
 
-                        ExtenderConfiguration::addCommand($command, $actions);
+                        ExtenderConfiguration::addCommand($package_name, $command, $actions);
 
                         $io->write(" <info>+</info> enabled command ".$command);
 
@@ -81,7 +81,7 @@ class ExtenderCommand extends AbstractAction {
 
                     case 'uninstall':
 
-                        ExtenderConfiguration::removeCommand($command);
+                        ExtenderConfiguration::removeCommand($package_name, $command);
 
                         $io->write(" <comment>-</comment> disabled command ".$command);
 

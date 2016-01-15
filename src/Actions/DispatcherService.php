@@ -69,7 +69,7 @@ class DispatcherService extends AbstractAction {
 
                     case 'install':
 
-                        DispatcherConfiguration::addRoute($service);
+                        DispatcherConfiguration::addRoute($package_name, $service);
 
                         $io->write(" <info>+</info> enabled service ".$service["name"]." (".$service["type"].")");
 
@@ -77,7 +77,7 @@ class DispatcherService extends AbstractAction {
 
                     case 'uninstall':
 
-                        DispatcherConfiguration::removeRoute($service);
+                        DispatcherConfiguration::removeRoute($package_name, $service);
 
                         $io->write(" <comment>-</comment> disabled service ".$service["name"]." (".$service["type"].")");
 

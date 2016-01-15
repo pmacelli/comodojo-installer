@@ -73,7 +73,7 @@ class ComodojoSetting extends AbstractAction {
 
                     case 'install':
 
-                        ComodojoConfiguration::addSetting($setting, $value);
+                        ComodojoConfiguration::addSetting($package_name, $setting, $value);
 
                         $io->write(" <info>+</info> added setting ".$setting);
 
@@ -81,7 +81,7 @@ class ComodojoSetting extends AbstractAction {
 
                     case 'uninstall':
 
-                        ComodojoConfiguration::removeSetting($setting, $value);
+                        ComodojoConfiguration::removeSetting($package_name, $setting, $value);
 
                         $io->write(" <comment>-</comment> removed setting ".$setting);
 

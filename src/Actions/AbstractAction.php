@@ -31,12 +31,16 @@ abstract class AbstractAction implements ActionInterface {
     private $composer;
 
     private $io;
+    
+    private $path;
 
-    public function __construct(Composer $composer, IOInterface $io) {
+    public function __construct(Composer $composer, IOInterface $io, $package_path) {
 
         $this->composer = $composer;
 
         $this->io = $io;
+        
+        $this->path = $package_path;
 
     }
 
@@ -55,6 +59,12 @@ abstract class AbstractAction implements ActionInterface {
     public function getComposer() {
 
         return $this->composer;
+
+    }
+    
+    public function getPath() {
+
+        return $this->path;
 
     }
 

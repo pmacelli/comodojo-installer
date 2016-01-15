@@ -71,9 +71,7 @@ class Plugin implements PluginInterface {
 
         define('COMODOJO_INSTALLER_APP_ASSETS', $installer_config['app-assets']);
 
-        define('COMODOJO_INSTALLER_FRAMEWORK_JS', $installer_config['framework-js']);
-
-        define('COMODOJO_INSTALLER_FRAMEWORK_TEMPLATES', $installer_config['framework-templates']);
+        define('COMODOJO_INSTALLER_THEME_ASSETS', $installer_config['theme-assets']);
 
         define('COMODOJO_INSTALLER_LOCAL_CACHE', $installer_config['local-cache']);
 

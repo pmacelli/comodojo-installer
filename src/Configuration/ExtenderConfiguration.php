@@ -30,11 +30,11 @@ use \Exception;
 
 class ExtenderConfiguration {
 
-    public static function addTask($task) {
+    public static function addTask($package_name, $task) {
 
         try {
 
-            Extender::addTask($task['name'], $task['class'], empty($task['description']) ? null, $task['description']);
+            Extender::addTask($task['name'], $task['class'], empty($task['description']) ? null : $task['description'], $package_name);
 
         } catch (ConfigurationException $ce) {
 
@@ -44,11 +44,11 @@ class ExtenderConfiguration {
 
     }
 
-    public static function removeTask($task) {
+    public static function removeTask($package_name, $task) {
 
         try {
 
-            Extender::removeTask($task['name']);
+            Extender::removeTask($task['name'], $package_name);
 
         } catch (ConfigurationException $ce) {
 
@@ -58,11 +58,11 @@ class ExtenderConfiguration {
 
     }
 
-    public static function addPlugin($plugin) {
+    public static function addPlugin($package_name, $plugin) {
 
         try {
 
-            Extender::addPlugin($plugin['event'], $plugin['class'], empty($plugin['method']) ? null : $plugin['method']);
+            Extender::addPlugin($plugin['event'], $plugin['class'], empty($plugin['method']) ? null : $plugin['method'], $package_name);
 
         } catch (ConfigurationException $ce) {
 
@@ -72,11 +72,11 @@ class ExtenderConfiguration {
 
     }
 
-    public static function removePlugin($plugin) {
+    public static function removePlugin($package_name, $plugin) {
 
         try {
 
-            Extender::removePlugin($task['event'], $task['class'], empty($task['method']) ? null : $task['method']);
+            Extender::removePlugin($task['event'], $task['class'], empty($task['method']) ? null : $task['method'], $package_name);
 
         } catch (ConfigurationException $ce) {
 
@@ -86,7 +86,7 @@ class ExtenderConfiguration {
 
     }
 
-    public static function addCommand($command, $actions) {
+    public static function addCommand($package_name, $command, $actions) {
 
         $class = $actions["class"];
 
@@ -118,7 +118,7 @@ class ExtenderConfiguration {
 
         try {
 
-            Extender::addCommand($command, $class, $description, $aliases, $options, $arguments);
+            Extender::addCommand($command, $class, $description, $aliases, $options, $arguments, $package_name);
 
         } catch (ConfigurationException $ce) {
 
@@ -128,7 +128,7 @@ class ExtenderConfiguration {
 
     }
 
-    public static function removeCommand($command) {
+    public static function removeCommand($package_name, $command, $package_name) {
 
         try {
 

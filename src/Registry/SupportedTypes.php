@@ -61,8 +61,9 @@ class SupportedTypes {
             "comodojo-command-register" => "ExtenderCommand"
         ),
 
-        'comodojo-theme' => array(
-            "comodojo-theme-register" => "ComodojoTheme"
+        'comodojo-component' => array(
+            "comodojo-theme-register" => "ComodojoTheme",
+            "comodojo-authentication-register" => "ComodojoAuthentication"
         ),
 
 	    'comodojo-bundle' => array(
@@ -77,7 +78,8 @@ class SupportedTypes {
             "comodojo-service-route" => "DispatcherService",
             "comodojo-task-register" => "ExtenderTask",
             "comodojo-command-register" => "ExtenderCommand",
-            "comodojo-theme-register" => "ComodojoTheme"
+            "comodojo-theme-register" => "ComodojoTheme",
+            "comodojo-authentication-register" => "ComodojoAuthentication"
         )
 
     );

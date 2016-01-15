@@ -28,7 +28,7 @@ use Composer\IO\IOInterface;
 
 interface ActionInterface {
 
-    public function __construct(Composer $composer, IOInterface, $io);
+    public function __construct(Composer $composer, IOInterface $io, $package_path);
 
     public function install($package_name, $package_extra);
 
