@@ -33,25 +33,9 @@ class ExtenderPlugin extends AbstractAction {
 
         $io = $this->getIO();
 
-        $io->write(">>> Enabling plugins of package ".$package_name);
+        $io->write("<info>>>> Installing (extender) plugins from package ".$package_name."</info>");
 
-        foreach ($package_extra as $plugin) {
-
-            try {
-
-                if ( !self::validatePlugin($plugin) ) throw new InstallerException('Skipping invalid plugin in '.$package_name);
-
-                ExtenderConfiguration::addPlugin($plugin);
-
-                $io->write("+ Enabled plugin ".$plugin["class"]."::".$plugin["method"]." on event ".$plugin["event"]);
-
-            } catch (Exception $e) {
-
-                $this->getIO()->write('<error>'.$e->getMessage().'</error>', false);
-
-            }
-
-        }
+        self::processPlugin($io, 'install', $package_extra);
 
     }
 
@@ -59,7 +43,7 @@ class ExtenderPlugin extends AbstractAction {
 
         $io = $this->getIO();
 
-        $io->write(">>> Updating plugins of package ".$package_name);
+        $io->write("<info>>>> Updating (extender) plugins from package ".$package_name."</info>");
 
         $this->uninstall($package_name, $initial_extra);
 
@@ -69,17 +53,45 @@ class ExtenderPlugin extends AbstractAction {
 
     public function uninstall($package_name, $package_extra) {
 
+        $io = $this->getIO();
+
+        $io->write("<info>>>> Removing (extender) plugins from package ".$package_name."</info>");
+
+        self::processPlugin($io, 'uninstall', $package_extra);
+
+    }
+
+    private static function processPlugin($io, $action, $package_extra) {
+
         foreach ($package_extra as $plugin) {
 
             try {
 
                 if ( !self::validatePlugin($plugin) ) throw new InstallerException('Skipping invalid plugin in '.$package_name);
 
-                ExtenderConfiguration::removePlugin($plugin);
+                switch ($action) {
+
+                    case 'install':
+
+                        ExtenderConfiguration::addPlugin($plugin);
+
+                        $io->write(" <info>+</info> enabled plugin ".$plugin["class"]."::".$plugin["method"]." on event ".$plugin["event"]);
+
+                        break;
+
+                    case 'uninstall':
+
+                        ExtenderConfiguration::removePlugin($plugin);
+
+                        $io->write(" <comment>-</comment> disabled plugin ".$plugin["class"]."::".$plugin["method"]." on event ".$plugin["event"]);
+
+                        break;
+
+                }
 
             } catch (Exception $e) {
 
-                $this->getIO()->write('<error>'.$e->getMessage().'</error>');
+                $io->write('<error>'.$e->getMessage().'</error>');
 
             }
 
