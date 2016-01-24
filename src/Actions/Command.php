@@ -1,14 +1,14 @@
 <?php namespace Comodojo\Installer\Actions;
 
-use \Comodojo\Installer\Configuration\ExtenderConfiguration;
 use \Comodojo\Exception\InstallerException;
 use \Exception;
 
 /**
- * Comodojo Installer
+ *
  *
  * @package     Comodojo Framework
  * @author      Marco Giovinazzi <marco.giovinazzi@comodojo.org>
+ * @author      Marco Castiello <marco.castiello@gmail.com>
  * @license     GPL-3.0+
  *
  * LICENSE:
@@ -27,7 +27,7 @@ use \Exception;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-class ExtenderCommand extends AbstractAction {
+class Command extends AbstractAction {
 
     public function install($package_name, $package_extra) {
 
@@ -64,24 +64,38 @@ class ExtenderCommand extends AbstractAction {
     private static function processCommand($io, $action, $package_name, $package_extra) {
 
         foreach ($package_extra as $command => $actions) {
-
+            
             try {
 
                 if ( !self::validateCommand($actions) ) throw new InstallerException('Skipping invalid command '.$command.' in '.$package_name);
+                
+                $class = $actions["class"];
 
+                $description = empty($actions["description"]) ? null : $actions["description"];
+
+                $aliases = isset($actions["aliases"]) && is_array($actions["aliases"]) ? $actions["aliases"] : array();
+                
+                $options = isset($actions["options"]) && is_array($actions["options"]) ? $actions["options"] : array();
+                
+                $arguments = isset($actions["arguments"]) && is_array($actions["arguments"]) ? $actions["arguments"] : array();
+    
                 switch ($action) {
 
                     case 'install':
-
-                        ExtenderConfiguration::addCommand($package_name, $command, $actions);
+                        
+                        $this->getPackageInstaller()
+                            ->commands()
+                            ->add($package_name, $command, $class, $description, $aliases, $options, $arguments);
 
                         $io->write(" <info>+</info> enabled command ".$command);
 
                         break;
 
                     case 'uninstall':
+                        
+                        $id = $this->getPackageInstaller()->commands()->getByName($name)->getId();
 
-                        ExtenderConfiguration::removeCommand($package_name, $command);
+                        $this->getPackageInstaller()->commands()->delete($id);
 
                         $io->write(" <comment>-</comment> disabled command ".$command);
 

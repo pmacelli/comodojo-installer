@@ -1,4 +1,4 @@
-<?php namespace Comodojo\Installer\Configuration;
+<?php namespace Comodojo\Installer\Scripts;
 
 use \Comodojo\Exception\InstallerException;
 
@@ -25,7 +25,7 @@ use \Comodojo\Exception\InstallerException;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-class StaticConfiguration {
+class StaticConfigurationDumper {
 
     private $settings = array(
         'COMODOJO_REAL_PATH' => COMODOJO_INSTALLER_WORKING_DIRECTORY,

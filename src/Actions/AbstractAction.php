@@ -2,12 +2,14 @@
 
 use Composer\Composer;
 use Composer\IO\IOInterface;
+use Comodojo\Configuration\Installer as PackageInstaller;
 
 /**
- * Comodojo Installer
+ *
  *
  * @package     Comodojo Framework
  * @author      Marco Giovinazzi <marco.giovinazzi@comodojo.org>
+ * @author      Marco Castiello <marco.castiello@gmail.com>
  * @license     GPL-3.0+
  *
  * LICENSE:
@@ -33,14 +35,18 @@ abstract class AbstractAction implements ActionInterface {
     private $io;
     
     private $path;
+    
+    private $package_installer;
 
-    public function __construct(Composer $composer, IOInterface $io, $package_path) {
+    public function __construct(Composer $composer, IOInterface $io, $package_path, PackageInstaller $package_installer) {
 
         $this->composer = $composer;
 
         $this->io = $io;
         
         $this->path = $package_path;
+        
+        $this->package_installer = $package_installer;
 
     }
 
@@ -66,6 +72,12 @@ abstract class AbstractAction implements ActionInterface {
 
         return $this->path;
 
+    }
+    
+    public function getPackageInstaller() {
+        
+        return $this->package_installer;
+        
     }
 
 }

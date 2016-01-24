@@ -2,12 +2,14 @@
 
 use Composer\Composer;
 use Composer\IO\IOInterface;
+use Comodojo\Configuration\Installer as PackageInstaller;
 
 /**
- * Comodojo Installer
+ *
  *
  * @package     Comodojo Framework
  * @author      Marco Giovinazzi <marco.giovinazzi@comodojo.org>
+ * @author      Marco Castiello <marco.castiello@gmail.com>
  * @license     GPL-3.0+
  *
  * LICENSE:
@@ -28,7 +30,7 @@ use Composer\IO\IOInterface;
 
 interface ActionInterface {
 
-    public function __construct(Composer $composer, IOInterface $io, $package_path);
+    public function __construct(Composer $composer, IOInterface $io, $package_path, PackageInstaller $package_installer);
 
     public function install($package_name, $package_extra);
 

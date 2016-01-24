@@ -1,4 +1,4 @@
-<?php namespace Comodojo\Installer\Configuration;
+<?php namespace Comodojo\Installer\Scripts;
 
 /**
  * Comodojo Installer

@@ -1,5 +1,6 @@
 <?php namespace Comodojo\Installer;
 
+use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Installer\LibraryInstaller;
 use Composer\Package\PackageInterface;
@@ -7,13 +8,15 @@ use Composer\Repository\InstalledRepositoryInterface;
 use Comodojo\Exception\InstallerException;
 use Comodojo\Installer\Properties\Parser;
 use Comodojo\Installer\Registry\SupportedTypes;
+use Comodojo\Configuration\Installer as PackageInstaller;
 
 
 /**
- * Comodojo Installer
+ *
  *
  * @package     Comodojo Framework
  * @author      Marco Giovinazzi <marco.giovinazzi@comodojo.org>
+ * @author      Marco Castiello <marco.castiello@gmail.com>
  * @license     GPL-3.0+
  *
  * LICENSE:
@@ -33,6 +36,16 @@ use Comodojo\Installer\Registry\SupportedTypes;
  */
 
 class Installer extends LibraryInstaller {
+
+    protected $package_installer;
+
+    public function __construct(Composer $composer, IOInterface $io, PackageInstaller $package_installer) {
+        
+        $this->package_installer = $package_installer;
+        
+        parent::__construct($composer, $io);
+        
+    }
 
     /**
      * {@inheritDoc}
@@ -83,12 +96,14 @@ class Installer extends LibraryInstaller {
         $package_name = $package->getPrettyName();
         
         $package_path = $this->composer->getInstallationManager()->getInstallPath($package);
+        
+        $installer = $this->getPackageInstaller();
 
         foreach ($actions_map as $action_class => $extra) {
 
             $action_fqcn = 'Comodojo\\Installer\\Actions\\' . $action_class;
 
-            $action = new $action_fqcn($this->composer, $this->io);
+            $action = new $action_fqcn($this->composer, $this->io, $package_path, $installer);
 
             $action->install($package_name, $extra);
 
@@ -103,12 +118,14 @@ class Installer extends LibraryInstaller {
         $package_name = $package->getPrettyName();
         
         $package_path = $this->composer->getInstallationManager()->getInstallPath($package);
+        
+        $installer = $this->getPackageInstaller();
 
         foreach ($actions_map as $action_class => $extra) {
 
             $action_fqcn = 'Comodojo\\Installer\\Actions\\' . $action_class;
 
-            $action = new $action_fqcn($this->composer, $this->io);
+            $action = new $action_fqcn($this->composer, $this->io, $package_path, $installer);
 
             $action->uninstall($package_name, $extra);
 
@@ -139,12 +156,14 @@ class Installer extends LibraryInstaller {
         $install = array_diff($target_actions, $initial_actions);
 
         $update = array_intersect($initial_actions, $target_actions);
+        
+        $installer = $this->getPackageInstaller();
 
         foreach ($uninstall as $action_uninstall) {
 
             $action_fqcn = 'Comodojo\\Installer\\Actions\\' . $action_uninstall;
 
-            $action = new $action_fqcn($this->composer, $this->io, $initial_package_path);
+            $action = new $action_fqcn($this->composer, $this->io, $initial_package_path, $installer);
 
             $action->uninstall($initial_package_name, $initial_actions_map[$action_uninstall]);
 
@@ -154,7 +173,7 @@ class Installer extends LibraryInstaller {
 
             $action_fqcn = 'Comodojo\\Installer\\Actions\\' . $action_install;
 
-            $action = new $action_fqcn($this->composer, $this->io, $target_package_path);
+            $action = new $action_fqcn($this->composer, $this->io, $target_package_path, $installer);
 
             $action->install($target_package_name, $target_actions_map[$action_install]);
 
@@ -164,12 +183,18 @@ class Installer extends LibraryInstaller {
 
             $action_fqcn = 'Comodojo\\Installer\\Actions\\' . $action_update;
 
-            $action = new $action_fqcn($this->composer, $this->io, $target_package_path);
+            $action = new $action_fqcn($this->composer, $this->io, $target_package_path, $installer);
 
             $action->update($target_package_name, $initial_actions_map[$action_update], $target_actions_map[$action_update]);
 
         }
 
+    }
+    
+    private function getPackageInstaller() {
+        
+        return $this->package_installer;
+        
     }
 
 }

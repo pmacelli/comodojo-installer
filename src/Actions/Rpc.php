@@ -1,14 +1,14 @@
 <?php namespace Comodojo\Installer\Actions;
 
-use \Comodojo\Installer\Configuration\ComodojoConfiguration;
 use \Comodojo\Exception\InstallerException;
 use \Exception;
 
 /**
- * Comodojo Installer
+ *
  *
  * @package     Comodojo Framework
  * @author      Marco Giovinazzi <marco.giovinazzi@comodojo.org>
+ * @author      Marco Castiello <marco.castiello@gmail.com>
  * @license     GPL-3.0+
  *
  * LICENSE:
@@ -27,7 +27,7 @@ use \Exception;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-class ComodojoRpc extends AbstractAction {
+class Rpc extends AbstractAction {
 
     public function install($package_name, $package_extra) {
 
@@ -63,25 +63,37 @@ class ComodojoRpc extends AbstractAction {
 
     private static function processRpc($io, $action, $package_name, $package_extra) {
 
-        foreach ($package_extra as $rpc) {
+        foreach ($package_extra as $rpc_method => $rpc) {
 
             try {
 
                 if ( !self::validateRpc($rpc) ) throw new InstallerException('Skipping invalid rpc service in '.$package_name);
-
+                
+                $callback = $rpc['callback'];
+                
+                $method = empty($rpc['method']) ? null : $rpc['method'];
+                
+                $description = empty($rpc['description']) ? null : $rpc['description'];
+                
+                $signatures = isset($rpc["signatures"]) && is_array($rpc["signatures"]) ? $rpc["signatures"] : array();
+                
                 switch ($action) {
 
                     case 'install':
 
-                        ComodojoConfiguration::addRpc($package_name, $rpc);
+                        $this->getPackageInstaller()
+                            ->rpc()
+                            ->add($package_name, $rpc_method, $callback, $method, $description, $signatures);
 
                         $io->write(" <info>+</info> added rpc service ".$rpc['name']);
 
                         break;
 
                     case 'uninstall':
+                        
+                        $id = $this->getPackageInstaller()->rpc()->getByName($rpc_method)->getId();
 
-                        ComodojoConfiguration::removeRpc($package_name, $rpc);
+                        $this->getPackageInstaller()->rpc()->delete($id);
 
                         $io->write(" <comment>-</comment> removed rpc service ".$rpc['name']);
 
@@ -101,7 +113,7 @@ class ComodojoRpc extends AbstractAction {
 
     private static function validateRpc($rpc) {
 
-        return !( empty($rpc['name']) || empty($rpc['callback']) || ( isset($rpc['signatures']) && !is_array($rpc['signatures']) ) );
+        return !( empty($rpc['callback']) || ( isset($rpc['signatures']) && !is_array($rpc['signatures']) ) );
 
     }
 

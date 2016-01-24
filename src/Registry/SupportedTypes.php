@@ -1,10 +1,11 @@
 <?php namespace Comodojo\Installer\Registry;
 
 /**
- * Comodojo Installer
+ *
  *
  * @package     Comodojo Framework
  * @author      Marco Giovinazzi <marco.giovinazzi@comodojo.org>
+ * @author      Marco Castiello <marco.castiello@gmail.com>
  * @license     GPL-3.0+
  *
  * LICENSE:
@@ -38,8 +39,8 @@ class SupportedTypes {
         ),
 
 	    'extender-commands-bundle' => array(
-            "comodojo-commands-register" => "ExtenderCommand",
-            "extender-command-register" => "ExtenderCommand"
+            "comodojo-commands-register" => "Command",
+            "extender-command-register" => "Command"
         ),
 
 	    'dispatcher-plugin' => array(
@@ -54,11 +55,11 @@ class SupportedTypes {
 
         'comodojo-app' => array(
             "comodojo-app-register" => "ComodojoApp",
-            "comodojo-configuration-register" => "ComodojoSetting",
+            "comodojo-configuration-register" => "Setting",
             "comodojo-rpc-register" => "ComodojoRpc",
             "comodojo-service-route" => "DispatcherService",
-            "comodojo-task-register" => "ExtenderTask",
-            "comodojo-command-register" => "ExtenderCommand"
+            "comodojo-task-register" => "Task",
+            "comodojo-command-register" => "Command"
         ),
 
         'comodojo-component' => array(
@@ -70,14 +71,14 @@ class SupportedTypes {
             "dispatcher-plugin-load" => "DispatcherPlugin",
             "dispatcher-service-route" => "DispatcherService",
             "extender-plugin-load" => "ExtenderPlugin",
-            "extender-command-register" => "ExtenderCommand",
+            "extender-command-register" => "Command",
             "extender-task-register" => "ExtenderTask",
             "comodojo-app-register" => "ComodojoApp",
-            "comodojo-configuration-register" => "ComodojoSetting",
+            "comodojo-configuration-register" => "Setting",
             "comodojo-rpc-register" => "ComodojoRpc",
             "comodojo-service-route" => "DispatcherService",
-            "comodojo-task-register" => "ExtenderTask",
-            "comodojo-command-register" => "ExtenderCommand",
+            "comodojo-task-register" => "Task",
+            "comodojo-command-register" => "Command",
             "comodojo-theme-register" => "ComodojoTheme",
             "comodojo-authentication-register" => "ComodojoAuthentication"
         )

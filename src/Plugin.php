@@ -3,12 +3,14 @@
 use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
+use Comodojo\Configuration\Installer as PackageInstaller;
 
 /**
- * Comodojo Installer
+ *
  *
  * @package     Comodojo Framework
  * @author      Marco Giovinazzi <marco.giovinazzi@comodojo.org>
+ * @author      Marco Castiello <marco.castiello@gmail.com>
  * @license     GPL-3.0+
  *
  * LICENSE:
@@ -36,10 +38,18 @@ class Plugin implements PluginInterface {
         if ( !$this->loadStaticConfiguration($composer) ) {
 
             $this->getIO()->write('<comment>Comodojo configuration not (yet) available.</comment>');
+            
+            $installer = new Installer($io, $composer);
 
+        } else {
+            
+            $package_installer = new PackageInstaller();
+            
+            $installer = new Installer($io, $composer, $package_installer);
+            
+            $this->getIO()->write('<comment>Comodojo configuration loaded, installer ready.</comment>');
+            
         }
-
-        $installer = new Installer($io, $composer);
 
         $composer->getInstallationManager()->addInstaller($installer);
 
@@ -56,7 +66,7 @@ class Plugin implements PluginInterface {
             'local-cache' => 'cache',
             'static-config' => 'config',
             'local-logs' => 'logs',
-            'local-database': 'database'
+            'local-database' => 'database'
         );
 
         if ( isset($extra['comodojo-installer-paths']) && is_array($extra['comodojo-installer-paths']) ) {
@@ -100,10 +110,5 @@ class Plugin implements PluginInterface {
         return false;
 
     }
-
-
-
-
-
 
 }
