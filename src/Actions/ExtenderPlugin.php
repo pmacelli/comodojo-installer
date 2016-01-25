@@ -1,6 +1,5 @@
 <?php namespace Comodojo\Installer\Actions;
 
-use \Comodojo\Installer\Configuration\ExtenderConfiguration;
 use \Comodojo\Exception\InstallerException;
 use \Exception;
 
@@ -45,9 +44,9 @@ class ExtenderPlugin extends AbstractAction {
 
         $io->write("<info>>>> Updating (extender) plugins from package ".$package_name."</info>");
 
-        self::processPlugin($io, 'uninstall', $package_name, $package_extra);
+        self::processPlugin($io, 'uninstall', $package_name, $initial_extra);
 
-        self::processPlugin($io, 'install', $package_name, $package_extra);
+        self::processPlugin($io, 'install', $package_name, $target_extra);
 
     }
 
@@ -73,7 +72,7 @@ class ExtenderPlugin extends AbstractAction {
 
                     case 'install':
 
-                        ExtenderConfiguration::addPlugin($package_name, $plugin);
+                        $this->getPackageInstaller()->tasks()->add($package_name, $name, $class, $description);
 
                         $io->write(" <info>+</info> enabled plugin ".$plugin["class"]."::".$plugin["method"]." on event ".$plugin["event"]);
 

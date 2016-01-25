@@ -54,15 +54,15 @@ class SupportedTypes {
         ),
 
         'comodojo-app' => array(
-            "comodojo-app-register" => "ComodojoApp",
+            "comodojo-app-register" => "App",
             "comodojo-configuration-register" => "Setting",
-            "comodojo-rpc-register" => "ComodojoRpc",
-            "comodojo-service-route" => "DispatcherService",
+            "comodojo-rpc-register" => "Rpc",
+            "comodojo-service-route" => "Service",
             "comodojo-task-register" => "Task",
             "comodojo-command-register" => "Command"
         ),
 
-        'comodojo-component' => array(
+        'comodojo-components' => array(
             "comodojo-theme-register" => "ComodojoTheme",
             "comodojo-authentication-register" => "ComodojoAuthentication"
         ),
@@ -73,14 +73,14 @@ class SupportedTypes {
             "extender-plugin-load" => "ExtenderPlugin",
             "extender-command-register" => "Command",
             "extender-task-register" => "ExtenderTask",
-            "comodojo-app-register" => "ComodojoApp",
+            "comodojo-app-register" => "App",
             "comodojo-configuration-register" => "Setting",
-            "comodojo-rpc-register" => "ComodojoRpc",
-            "comodojo-service-route" => "DispatcherService",
+            "comodojo-rpc-register" => "Rpc",
+            "comodojo-service-route" => "Service",
             "comodojo-task-register" => "Task",
             "comodojo-command-register" => "Command",
-            "comodojo-theme-register" => "ComodojoTheme",
-            "comodojo-authentication-register" => "ComodojoAuthentication"
+            "comodojo-theme-register" => "Theme",
+            "comodojo-authentication-register" => "Authentication"
         )
 
     );
