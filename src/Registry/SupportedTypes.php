@@ -49,8 +49,8 @@ class SupportedTypes {
         ),
 
 	    'dispatcher-service-bundle' => array(
-            "comodojo-service-route" => "DispatcherService",
-            "dispatcher-service-route" => "DispatcherService"
+            "comodojo-service-route" => "Service",
+            "dispatcher-service-route" => "Service"
         ),
 
         'comodojo-app' => array(
@@ -63,13 +63,13 @@ class SupportedTypes {
         ),
 
         'comodojo-components' => array(
-            "comodojo-theme-register" => "ComodojoTheme",
-            "comodojo-authentication-register" => "ComodojoAuthentication"
+            "comodojo-theme-register" => "Theme",
+            "comodojo-authentication-register" => "Authentication"
         ),
 
 	    'comodojo-bundle' => array(
             "dispatcher-plugin-load" => "DispatcherPlugin",
-            "dispatcher-service-route" => "DispatcherService",
+            "dispatcher-service-route" => "Service",
             "extender-plugin-load" => "ExtenderPlugin",
             "extender-command-register" => "Command",
             "extender-task-register" => "ExtenderTask",

@@ -34,7 +34,7 @@ class ExtenderPlugin extends AbstractAction {
 
         $io->write("<info>>>> Installing (extender) plugins from package ".$package_name."</info>");
 
-        self::processPlugin($io, 'install', $package_name, $package_extra);
+        $this->processPlugin($io, 'install', $package_name, $package_extra);
 
     }
 
@@ -44,9 +44,9 @@ class ExtenderPlugin extends AbstractAction {
 
         $io->write("<info>>>> Updating (extender) plugins from package ".$package_name."</info>");
 
-        self::processPlugin($io, 'uninstall', $package_name, $initial_extra);
+        $this->processPlugin($io, 'uninstall', $package_name, $initial_extra);
 
-        self::processPlugin($io, 'install', $package_name, $target_extra);
+        $this->processPlugin($io, 'install', $package_name, $target_extra);
 
     }
 
@@ -56,33 +56,43 @@ class ExtenderPlugin extends AbstractAction {
 
         $io->write("<info>>>> Removing (extender) plugins from package ".$package_name."</info>");
 
-        self::processPlugin($io, 'uninstall', $package_name, $package_extra);
+        $this->processPlugin($io, 'uninstall', $package_name, $package_extra);
 
     }
 
     private static function processPlugin($io, $action, $package_name, $package_extra) {
 
-        foreach ($package_extra as $plugin) {
+        foreach ($package_extra as $plugin => $configuration) {
 
             try {
 
-                if ( !self::validatePlugin($plugin) ) throw new InstallerException('Skipping invalid plugin in '.$package_name);
+                if ( !self::validatePlugin($configuration) ) throw new InstallerException('Skipping invalid plugin in '.$package_name);
 
+                $plugin_name = $package_name.'-extender-'.$plugin;
+                
+                $event = $configuration["event"];
+                
+                $class = $configuration["class"];
+                
+                $method = empty($configuration["method"]) ? null : $configuration["method"];
+                
                 switch ($action) {
 
                     case 'install':
 
-                        $this->getPackageInstaller()->tasks()->add($package_name, $name, $class, $description);
+                        $this->getPackageInstaller()->plugins()->add($package_name, 'extender', $plugin_name, $event, $class, $method);
 
-                        $io->write(" <info>+</info> enabled plugin ".$plugin["class"]."::".$plugin["method"]." on event ".$plugin["event"]);
+                        $io->write(" <info>+</info> enabled plugin ".$plugin_name." on event ".$event);
 
                         break;
 
                     case 'uninstall':
 
-                        ExtenderConfiguration::removePlugin($package_name, $plugin);
+                        $id = $this->getPackageInstaller()->plugins()->byName($plugin_name)->getId();
 
-                        $io->write(" <comment>-</comment> disabled plugin ".$plugin["class"]."::".$plugin["method"]." on event ".$plugin["event"]);
+                        $this->getPackageInstaller()->plugins()->delete($id);
+
+                        $io->write(" <comment>-</comment> disabled plugin ".$plugin_name." on event ".$event);
 
                         break;
 

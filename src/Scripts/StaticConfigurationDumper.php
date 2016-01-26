@@ -28,23 +28,36 @@ use \Comodojo\Exception\InstallerException;
 class StaticConfigurationDumper {
 
     private $settings = array(
-        'COMODOJO_REAL_PATH' => COMODOJO_INSTALLER_WORKING_DIRECTORY,
-        'COMODOJO_STATIC_CONFIG' => COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_STATIC_CONFIG,
-        'COMODOJO_LOCAL_CACHE' => COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_LOCAL_CACHE,
-        'COMODOJO_LOCAL_LOGS' => COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_LOCAL_LOGS,
-        'COMODOJO_LOCAL_DATABASE' => COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_LOCAL_DATABASE,
-
         'COMODOJO_DATABASE_MODEL' => 'MYSQL',
         'COMODOJO_DATABASE_HOST' => 'localhost',
         'COMODOJO_DATABASE_PORT' => 3306,
         'COMODOJO_DATABASE_NAME' => 'comodojo',
         'COMODOJO_DATABASE_USER' => 'comodojo',
         'COMODOJO_DATABASE_PASS' => 'comodojo',
-        'COMODOJO_DATABASE_PREFIX' => "cmdj_",
-
-        'COMODOJO_APP_ASSETS' => COMODOJO_INSTALLER_APP_ASSETS,
-        'COMODOJO_THEME_ASSETS' => COMODOJO_INSTALLER_THEME_ASSETS
+        'COMODOJO_DATABASE_PREFIX' => "cmdj_"
     );
+    
+    public function __construct( $parameters = array() ) {
+        
+        $this->set('COMODOJO_REAL_PATH', COMODOJO_INSTALLER_WORKING_DIRECTORY);
+        $this->set('COMODOJO_STATIC_CONFIG', COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_STATIC_CONFIG);
+        $this->set('COMODOJO_LOCAL_CACHE', COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_LOCAL_CACHE);
+        $this->set('COMODOJO_LOCAL_LOGS', COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_LOCAL_LOGS);
+        $this->set('COMODOJO_LOCAL_DATABASE', COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_LOCAL_DATABASE);
+        $this->set('COMODOJO_APP_ASSETS', COMODOJO_INSTALLER_APP_ASSETS);
+        $this->set('COMODOJO_THEME_ASSETS', COMODOJO_INSTALLER_THEME_ASSETS);
+        
+        $this->set('COMODOJO_AUTH_KEY', self::generateKey());
+        $this->set('COMODOJO_PRIV_KEY', self::generateKey());
+        
+        
+        foreach( $parameters as $parameter => $value ) {
+            
+            $this->set($parameter, $value);
+            
+        }
+        
+    }
 
     public function __set($setting, $value) {
 
@@ -102,6 +115,18 @@ class StaticConfigurationDumper {
 
         return $template;
 
+    }
+    
+    private function generateKey() {
+        
+        return md5(uniqid(rand(), true), 0);
+        
+    }
+    
+    private function generateSalt() {
+        
+        return uniqid(mt_rand(), true);
+        
     }
 
 }

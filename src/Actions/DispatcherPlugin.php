@@ -1,6 +1,5 @@
 <?php namespace Comodojo\Installer\Actions;
 
-use \Comodojo\Installer\Configuration\DispatcherConfiguration;
 use \Comodojo\Exception\InstallerException;
 use \Exception;
 
@@ -35,7 +34,7 @@ class DispatcherPlugin extends AbstractAction {
 
         $io->write("<info>>>> Installing (dispatcher) plugins from package ".$package_name."</info>");
 
-        self::processPlugin($io, 'install', $package_name, $package_extra);
+        $this->processPlugin($io, 'install', $package_name, $package_extra);
 
     }
 
@@ -45,9 +44,9 @@ class DispatcherPlugin extends AbstractAction {
 
         $io->write("<info>>>> Updating (dispatcher) plugins from package ".$package_name."</info>");
 
-        self::processPlugin($io, 'uninstall', $package_name, $package_extra);
+        $this->processPlugin($io, 'uninstall', $package_name, $initial_extra);
 
-        self::processPlugin($io, 'install', $package_name, $package_extra);
+        $this->processPlugin($io, 'install', $package_name, $target_extra);
 
     }
 
@@ -57,33 +56,43 @@ class DispatcherPlugin extends AbstractAction {
 
         $io->write("<info>>>> Removing (dispatcher) plugins from package ".$package_name."</info>");
 
-        self::processPlugin($io, 'uninstall', $package_name, $package_extra);
+        $this->processPlugin($io, 'uninstall', $package_name, $package_extra);
 
     }
 
     private static function processPlugin($io, $action, $package_name, $package_extra) {
 
-        foreach ($package_extra as $plugin) {
+        foreach ($package_extra as $plugin => $configuration) {
 
             try {
 
-                if ( !self::validatePlugin($plugin) ) throw new InstallerException('Skipping invalid plugin in '.$package_name);
+                if ( !self::validatePlugin($configuration) ) throw new InstallerException('Skipping invalid plugin in '.$package_name);
 
+                $plugin_name = $package_name.'-dispatcher-'.$plugin;
+                
+                $event = $configuration["event"];
+                
+                $class = $configuration["class"];
+                
+                $method = empty($configuration["method"]) ? null : $configuration["method"];
+                
                 switch ($action) {
 
                     case 'install':
 
-                        DispatcherConfiguration::addPlugin($package_name, $plugin);
+                        $this->getPackageInstaller()->plugins()->add($package_name, 'dispatcher', $plugin_name, $event, $class, $method);
 
-                        $io->write(" <info>+</info> enabled plugin ".$plugin["class"]."::".$plugin["method"]." on event ".$plugin["event"]);
+                        $io->write(" <info>+</info> enabled plugin ".$plugin_name." on event ".$event);
 
                         break;
 
                     case 'uninstall':
 
-                        DispatcherConfiguration::removePlugin($package_name, $plugin);
+                        $id = $this->getPackageInstaller()->plugins()->byName($plugin_name)->getId();
 
-                        $io->write(" <comment>-</comment> disabled plugin ".$plugin["class"]."::".$plugin["method"]." on event ".$plugin["event"]);
+                        $this->getPackageInstaller()->plugins()->delete($id);
+
+                        $io->write(" <comment>-</comment> disabled plugin ".$plugin_name." on event ".$event);
 
                         break;
 

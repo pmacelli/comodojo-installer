@@ -1,5 +1,8 @@
 <?php namespace Comodojo\Installer\Actions;
 
+use \Comodojo\Exception\InstallerException;
+use \Exception;
+
 /**
  * Comodojo Installer
  *
@@ -23,7 +26,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-class DispatcherService extends AbstractAction {
+class Service extends AbstractAction {
 
     public function install($package_name, $package_extra) {
 
@@ -31,7 +34,7 @@ class DispatcherService extends AbstractAction {
 
         $io->write("<info>>>> Installing (dispatcher) services from package ".$package_name."</info>");
 
-        self::processService($io, 'install', $package_name, $package_extra);
+        $this->processService($io, 'install', $package_name, $package_extra);
 
     }
 
@@ -41,9 +44,9 @@ class DispatcherService extends AbstractAction {
 
         $io->write("<info>>>> Updating (dispatcher) services from package ".$package_name."</info>");
 
-        self::processService($io, 'uninstall', $package_name, $package_extra);
+        $this->processService($io, 'uninstall', $package_name, $initial_extra);
 
-        self::processService($io, 'install', $package_name, $package_extra);
+        $this->processService($io, 'install', $package_name, $target_extra);
 
     }
 
@@ -53,7 +56,7 @@ class DispatcherService extends AbstractAction {
 
         $io->write("<info>>>> Removing (dispatcher) services from package ".$package_name."</info>");
 
-        self::processService($io, 'uninstall', $package_name, $package_extra);
+        $this->processService($io, 'uninstall', $package_name, $package_extra);
 
     }
 
@@ -65,13 +68,21 @@ class DispatcherService extends AbstractAction {
 
                 if ( !self::validateService($service) ) throw new InstallerException('Skipping invalid service in '.$package_name);
 
+                $route = $service["route"];
+                
+                $type = $service["type"];
+                
+                $class = $service["class"];
+                
+                $parameters = empty($service["parameters"]) ? array() : $service["parameters"];
+
                 switch ($action) {
 
                     case 'install':
 
-                        DispatcherConfiguration::addRoute($package_name, $service);
+                        $this->getPackageInstaller()->services()->add($package_name, $route, $type, $class, $parameters);
 
-                        $io->write(" <info>+</info> enabled service ".$service["name"]." (".$service["type"].")");
+                        $io->write(" <info>+</info> enabled route ".$route." (".$type.")");
 
                         break;
 
@@ -79,7 +90,7 @@ class DispatcherService extends AbstractAction {
 
                         DispatcherConfiguration::removeRoute($package_name, $service);
 
-                        $io->write(" <comment>-</comment> disabled service ".$service["name"]." (".$service["type"].")");
+                        $io->write(" <comment>-</comment> disabled route ".$route." (".$type.")");
 
                         break;
 
@@ -97,7 +108,7 @@ class DispatcherService extends AbstractAction {
 
     private static function validateService($service) {
 
-        return !( empty($service["name"]) || empty($service["path"]) || empty($service["type"]) || empty($service["target"]) );
+        return !( empty($service["route"]) || empty($service["type"]) || empty($service["class"]) );
 
     }
 
