@@ -1,0 +1,10 @@
+{
+    "package": {
+        "name": "comodojo/comodojo-installer",
+        "source": {
+          "url": "git@github.com:comodojo/comodojo-installer.git",
+          "type": "git",
+          "reference": "master"
+        }
+    }
+}

@@ -85,7 +85,7 @@ class StaticConfigurationDumper {
 
     }
 
-    public function persist() {
+    public function dump() {
 
         $config_file = COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_STATIC_CONFIG.'/'.comodojo-config.php;
 
