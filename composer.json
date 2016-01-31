@@ -27,8 +27,9 @@
         "class": "Comodojo\\Installer\\Plugin"
     },
     "require": {
-        "composer-plugin-api": "1.0.0",
-        "comodojo/exceptions": "^1.0.2"
+        "composer-plugin-api": "^1.0",
+        "comodojo/exceptions": "^1.0",
+        "symfony/yaml": "^3.0"
     },
     "require-dev": {
         "composer/composer": "1.0.*@dev",
