@@ -46,13 +46,13 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 
             $io->write('<comment>Comodojo configuration not (yet) available.</comment>');
 
-            $installer = new Installer($io, $composer);
+            $installer = new Installer($composer, $io);
 
         } else {
 
             $package_installer = new PackageInstaller($this->configuration);
 
-            $installer = new Installer($io, $composer, $package_installer);
+            $installer = new Installer($composer, $io, $package_installer);
 
             $io->write('<comment>Comodojo configuration loaded, installer ready.</comment>');
 

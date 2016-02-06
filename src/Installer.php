@@ -39,12 +39,12 @@ class Installer extends LibraryInstaller {
 
     protected $package_installer;
 
-    public function __construct(Composer $composer, IOInterface $io, PackageInstaller $package_installer) {
-        
+    public function __construct(Composer $composer, IOInterface $io, PackageInstaller $package_installer = null) {
+
         $this->package_installer = $package_installer;
-        
+
         parent::__construct($composer, $io);
-        
+
     }
 
     /**
@@ -94,9 +94,9 @@ class Installer extends LibraryInstaller {
         $actions_map = Parser::parse($package);
 
         $package_name = $package->getPrettyName();
-        
+
         $package_path = $this->composer->getInstallationManager()->getInstallPath($package);
-        
+
         $installer = $this->getPackageInstaller();
 
         foreach ($actions_map as $action_class => $extra) {
@@ -116,9 +116,9 @@ class Installer extends LibraryInstaller {
         $actions_map = Parser::parse($package);
 
         $package_name = $package->getPrettyName();
-        
+
         $package_path = $this->composer->getInstallationManager()->getInstallPath($package);
-        
+
         $installer = $this->getPackageInstaller();
 
         foreach ($actions_map as $action_class => $extra) {
@@ -142,11 +142,11 @@ class Installer extends LibraryInstaller {
         $initial_package_name = $initial->getPrettyName();
 
         $target_package_name = $target->getPrettyName();
-        
+
         $initial_package_path = $this->composer->getInstallationManager()->getInstallPath($initial);
-        
+
         $target_package_path = $this->composer->getInstallationManager()->getInstallPath($target);
-        
+
         $initial_actions = array_keys($initial_actions_map);
 
         $target_actions = array_keys($target_actions_map);
@@ -156,7 +156,7 @@ class Installer extends LibraryInstaller {
         $install = array_diff($target_actions, $initial_actions);
 
         $update = array_intersect($initial_actions, $target_actions);
-        
+
         $installer = $this->getPackageInstaller();
 
         foreach ($uninstall as $action_uninstall) {
@@ -190,11 +190,11 @@ class Installer extends LibraryInstaller {
         }
 
     }
-    
+
     private function getPackageInstaller() {
-        
+
         return $this->package_installer;
-        
+
     }
 
 }
