@@ -39,11 +39,11 @@ class Installer extends LibraryInstaller {
 
     protected $package_installer;
 
-    public function __construct(Composer $composer, IOInterface $io, PackageInstaller $package_installer = null) {
+    public function __construct(IOInterface $io, Composer $composer, PackageInstaller $package_installer = null) {
 
         $this->package_installer = $package_installer;
 
-        parent::__construct($composer, $io);
+        parent::__construct($io, $composer);
 
     }
 
