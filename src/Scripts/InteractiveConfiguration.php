@@ -1,5 +1,8 @@
 <?php namespace Comodojo\Installer\Scripts;
 
+use \Comodojo\Dispatcher\Components\Configuration;
+use \Composer\IO\IOInterface;
+
 /**
  * Comodojo Installer
  *
@@ -25,34 +28,34 @@
 
 class InteractiveConfiguration {
 
-    public static function postCreateProjectCmd(PackageEvent $event) {
+    public static function start(Configuration $configuration, IOInterface $io) {
 
-        $io = $event->getIO();
-        
         $params = array();
         
         $io->write("<info>Starting comodojo base configuration.
             Please answer the following questions as accurately and honestly as possible...</info>");
         
-        $params['COMODOJO_DATABASE_HOST'] = $io->ask("Database host?", "localhost");
+        $params['database-model'] = $io->ask("Database model?", "MYSQLI");
         
-        $params['COMODOJO_DATABASE_PORT'] = $io->askAndValidate("Database port?", function($value) {
+        $params['database-host'] = $io->ask("Database host?", "localhost");
+        
+        $params['database-port'] = $io->askAndValidate("Database port?", function($value) {
             return is_int($value);
         }, 3, 3306);
         
-        $params['COMODOJO_DATABASE_NAME'] = $io->ask("Database name?", "comodojo");
+        $params['database-name'] = $io->ask("Database name?", "comodojo");
         
-        $params['COMODOJO_DATABASE_USER'] = $io->ask("Database user?", "comodojo");
+        $params['database-user'] = $io->ask("Database user?", "comodojo");
         
-        $params['COMODOJO_DATABASE_PASS'] = $io->ask("Database password?", "");
+        $params['database-password'] = $io->askAndHideAnswer("Database password?");
         
-        $params['COMODOJO_DATABASE_PREFIX'] = $io->ask("Common prefix for database tables?", "cmdj_");
+        $params['database-prefix'] = $io->ask("Common prefix for database tables?", "cmdj_");
         
-        $dumper = new StaticConfiguartionDumper($params);
-        
-        $dumper->dump();
-        
-        $io->write("<info>Configuartion completed. Remember to exec 'php comodojo.php install' to install framework. Have fun.</info>");
+        foreach ($params as $param => $value) {
+            
+            $configuration->set($param, $value);
+            
+        }
 
     }
 

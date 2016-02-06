@@ -1,9 +1,16 @@
 <?php namespace Comodojo\Installer;
 
-use Composer\Composer;
-use Composer\IO\IOInterface;
-use Composer\Plugin\PluginInterface;
-use Comodojo\Configuration\Installer as PackageInstaller;
+use \Composer\Composer;
+use \Composer\IO\IOInterface;
+use \Composer\Plugin\PluginInterface;
+use \Composer\Plugin\PluginEvents;
+use \Composer\EventDispatcher\EventSubscriberInterface;
+use \Composer\EventDispatcher\Event;
+use \Comodojo\Configuration\Installer as PackageInstaller;
+use \Comodojo\Dispatcher\Components\Configuration;
+use \Comodojo\Installer\Scripts\InteractiveConfiguration;
+use \Comodojo\Installer\Scripts\StaticConfigurationDumper;
+use \Symfony\Component\Yaml\Yaml;
 
 /**
  *
@@ -29,13 +36,13 @@ use Comodojo\Configuration\Installer as PackageInstaller;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-class Plugin implements PluginInterface {
+class Plugin implements PluginInterface, EventSubscriberInterface {
 
     public function activate(Composer $composer, IOInterface $io) {
 
-        $this->loadInstallerConfig($composer);
+        $this->configuration = $this->loadInstallerConfig($composer);
 
-        if ( !$this->loadStaticConfiguration($composer) ) {
+        if ( !$this->loadStaticConfiguration($this->configuration) ) {
 
             $this->getIO()->write('<comment>Comodojo configuration not (yet) available.</comment>');
             
@@ -43,7 +50,7 @@ class Plugin implements PluginInterface {
 
         } else {
             
-            $package_installer = new PackageInstaller();
+            $package_installer = new PackageInstaller($this->configuration);
             
             $installer = new Installer($io, $composer, $package_installer);
             
@@ -54,6 +61,30 @@ class Plugin implements PluginInterface {
         $composer->getInstallationManager()->addInstaller($installer);
 
     }
+    
+    public static function getSubscribedEvents() {
+        
+        return array(
+            'post-create-project-cmd' => array(
+                array('startInteractiveCommands', 0)
+            )
+        );
+        
+    }
+    
+    public function startInteractiveCommands(Event $event) {
+        
+        $io = $event->getIO();
+        
+        InteractiveConfiguration::start($this->configuration, $io);
+        
+        StaticConfiguartionDumper::dump($this->configuration);
+        
+        $io->write("<info>Static configuration dumped.");
+        $io->write("Remember to exec 'php comodojo.php install' to complete installation of framework.");
+        $io->write("Have fun!</info>");
+        
+    }
 
     private function loadInstallerConfig(Composer $composer) {
 
@@ -61,8 +92,7 @@ class Plugin implements PluginInterface {
 
         $installer_default_config = array(
             'app-assets' => 'public/apps',
-            'framework-js' => 'public/js',
-            'framework-templates' => 'public/templates',
+            'theme-assets' => 'public/themes',
             'local-cache' => 'cache',
             'static-config' => 'config',
             'local-logs' => 'logs',
@@ -79,29 +109,37 @@ class Plugin implements PluginInterface {
 
         }
 
-        define('COMODOJO_INSTALLER_APP_ASSETS', $installer_config['app-assets']);
+        $configuration = new Configuration();
+        
+        foreach ( $installer_config as $setting => $value ) {
+            
+            $configuration->set($setting, $value);
+            
+        }
 
-        define('COMODOJO_INSTALLER_THEME_ASSETS', $installer_config['theme-assets']);
-
-        define('COMODOJO_INSTALLER_LOCAL_CACHE', $installer_config['local-cache']);
-
-        define('COMODOJO_INSTALLER_STATIC_CONFIG', $installer_config['static-config']);
-
-        define('COMODOJO_INSTALLER_LOCAL_LOGS', $installer_config['local-logs']);
-
-        define('COMODOJO_INSTALLER_LOCAL_DATABASE', $installer_config['local-database']);
-
-        define('COMODOJO_INSTALLER_WORKING_DIRECTORY', getcwd());
+        $configuration->set('installer-working-directory', getcwd());
+        
+        return $configuration;
 
     }
 
-    private function loadStaticConfiguration() {
+    private function loadStaticConfiguration(Configuration $configuration) {
 
-        $config_file = COMODOJO_INSTALLER_WORKING_DIRECTORY.COMODOJO_INSTALLER_STATIC_CONFIG.'/config.php';
+        $installer_wd = $configuration->get('installer-working-directory');
+        
+        $static_folder = $configuration->get('static-config'); 
 
-        if ( is_file($config_file) && is_readable($config_file) ) {
+        $config_file = $installer_wd.'/'.$static_folder.'/comodojo-config.yml';
 
-            include_once($config_file);
+        if ( is_file($config_file) && is_readable($config_file) && $yaml = file_get_contents($config_file) ) {
+
+            $data = Yaml::parse($yaml);
+
+            foreach( $data as $parameter => $value ) {
+                
+                $this->configuration->set($parameter, $value);
+                
+            }
 
             return true;
 

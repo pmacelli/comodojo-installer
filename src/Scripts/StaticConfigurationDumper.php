@@ -1,5 +1,7 @@
 <?php namespace Comodojo\Installer\Scripts;
 
+use \Comodojo\Dispatcher\Components\Configuration;
+use \Symfony\Component\Yaml\Yaml;
 use \Comodojo\Exception\InstallerException;
 
 /**
@@ -27,105 +29,33 @@ use \Comodojo\Exception\InstallerException;
 
 class StaticConfigurationDumper {
 
-    private $settings = array(
-        'COMODOJO_DATABASE_MODEL' => 'MYSQL',
-        'COMODOJO_DATABASE_HOST' => 'localhost',
-        'COMODOJO_DATABASE_PORT' => 3306,
-        'COMODOJO_DATABASE_NAME' => 'comodojo',
-        'COMODOJO_DATABASE_USER' => 'comodojo',
-        'COMODOJO_DATABASE_PASS' => 'comodojo',
-        'COMODOJO_DATABASE_PREFIX' => "cmdj_"
-    );
-    
-    public function __construct( $parameters = array() ) {
+    public static function dump(Configuration $configuration) {
         
-        $this->set('COMODOJO_REAL_PATH', COMODOJO_INSTALLER_WORKING_DIRECTORY);
-        $this->set('COMODOJO_STATIC_CONFIG', COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_STATIC_CONFIG);
-        $this->set('COMODOJO_LOCAL_CACHE', COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_LOCAL_CACHE);
-        $this->set('COMODOJO_LOCAL_LOGS', COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_LOCAL_LOGS);
-        $this->set('COMODOJO_LOCAL_DATABASE', COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_LOCAL_DATABASE);
-        $this->set('COMODOJO_APP_ASSETS', COMODOJO_INSTALLER_APP_ASSETS);
-        $this->set('COMODOJO_THEME_ASSETS', COMODOJO_INSTALLER_THEME_ASSETS);
+        $installer_wd = $configuration->get('installer-working-directory');
         
-        $this->set('COMODOJO_AUTH_KEY', self::generateKey());
-        $this->set('COMODOJO_PRIV_KEY', self::generateKey());
+        $static_folder = $configuration->get('static-config');
         
+        $config_file = $installer_wd.'/'.$static_folder.'/comodojo-config.yml';
         
-        foreach( $parameters as $parameter => $value ) {
-            
-            $this->set($parameter, $value);
-            
-        }
+        $configuration->set("authentication-key", self::generateKey());
         
-    }
+        $configuration->set("private-key", self::generateKey());
+        
+        $configuration_array = $configuration->get();
 
-    public function __set($setting, $value) {
-
-        $this->$settings[$setting] = $value;
-
-        return $this;
-
-    }
-
-    public function __get($setting) {
-
-        if (array_key_exists($setting, $this->$settings)) {
-
-            return $this->$settings[$setting];
-
-        }
-
-        return null;
-
-    }
-
-    public function __isset($setting) {
-
-        return isset($this->$settings[$setting]);
-
-    }
-
-    public function dump() {
-
-        $config_file = COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_STATIC_CONFIG.'/'.comodojo-config.php;
-
-        $template = $this->loadConfigurationTemplate();
-
-        foreach ($this->settings as $setting => $value) {
-
-            $template = str_replace('_'.$setting.'_', $value, $template);
-
-        }
-
-        $action = file_put_contents($config_file, $template, LOCK_EX);
+        $yaml = Yaml::dump($configuration_array, 2);
+        
+        $action = file_put_contents($config_file, $yaml, LOCK_EX);
 
         if ( $action === false ) throw new InstallerException("Cannot write comodojo-config file!");
 
         return true;
 
     }
-
-    private function loadConfigurationTemplate() {
-
-        $template_file = realpath(dirname(__FILE__)."/../../")."/comodojo-config.template";
-
-        $template = file_get_contents($template_file);
-
-        if ( $template === false ) throw new InstallerException("Cannot read comodojo-config template!");
-
-        return $template;
-
-    }
     
     private function generateKey() {
         
         return md5(uniqid(rand(), true), 0);
-        
-    }
-    
-    private function generateSalt() {
-        
-        return uniqid(mt_rand(), true);
         
     }
 

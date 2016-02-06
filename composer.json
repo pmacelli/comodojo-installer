@@ -28,6 +28,8 @@
     },
     "require": {
         "composer-plugin-api": "^1.0",
+        "comodojo/comodojo-framework": "dev-master",
+        "comodojo/dispatcher.framework": "^4.0",
         "comodojo/exceptions": "^1.0",
         "symfony/yaml": "^3.0"
     },
