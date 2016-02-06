@@ -44,46 +44,46 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 
         if ( !$this->loadStaticConfiguration($this->configuration) ) {
 
-            $this->getIO()->write('<comment>Comodojo configuration not (yet) available.</comment>');
-            
+            $io->write('<comment>Comodojo configuration not (yet) available.</comment>');
+
             $installer = new Installer($io, $composer);
 
         } else {
-            
+
             $package_installer = new PackageInstaller($this->configuration);
-            
+
             $installer = new Installer($io, $composer, $package_installer);
-            
-            $this->getIO()->write('<comment>Comodojo configuration loaded, installer ready.</comment>');
-            
+
+            $io->write('<comment>Comodojo configuration loaded, installer ready.</comment>');
+
         }
 
         $composer->getInstallationManager()->addInstaller($installer);
 
     }
-    
+
     public static function getSubscribedEvents() {
-        
+
         return array(
             'post-create-project-cmd' => array(
                 array('startInteractiveCommands', 0)
             )
         );
-        
+
     }
-    
+
     public function startInteractiveCommands(Event $event) {
-        
+
         $io = $event->getIO();
-        
+
         InteractiveConfiguration::start($this->configuration, $io);
-        
+
         StaticConfiguartionDumper::dump($this->configuration);
-        
+
         $io->write("<info>Static configuration dumped.");
         $io->write("Remember to exec 'php comodojo.php install' to complete installation of framework.");
         $io->write("Have fun!</info>");
-        
+
     }
 
     private function loadInstallerConfig(Composer $composer) {
@@ -110,15 +110,15 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
         }
 
         $configuration = new Configuration();
-        
+
         foreach ( $installer_config as $setting => $value ) {
-            
+
             $configuration->set($setting, $value);
-            
+
         }
 
         $configuration->set('installer-working-directory', getcwd());
-        
+
         return $configuration;
 
     }
@@ -126,8 +126,8 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
     private function loadStaticConfiguration(Configuration $configuration) {
 
         $installer_wd = $configuration->get('installer-working-directory');
-        
-        $static_folder = $configuration->get('static-config'); 
+
+        $static_folder = $configuration->get('static-config');
 
         $config_file = $installer_wd.'/'.$static_folder.'/comodojo-config.yml';
 
@@ -136,9 +136,9 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
             $data = Yaml::parse($yaml);
 
             foreach( $data as $parameter => $value ) {
-                
+
                 $this->configuration->set($parameter, $value);
-                
+
             }
 
             return true;
