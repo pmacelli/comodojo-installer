@@ -30,21 +30,21 @@ use \Comodojo\Exception\InstallerException;
 class StaticConfigurationDumper {
 
     public static function dump(Configuration $configuration) {
-        
+
         $installer_wd = $configuration->get('installer-working-directory');
-        
+
         $static_folder = $configuration->get('static-config');
-        
+
         $config_file = $installer_wd.'/'.$static_folder.'/comodojo-config.yml';
-        
+
         $configuration->set("authentication-key", self::generateKey());
-        
+
         $configuration->set("private-key", self::generateKey());
-        
+
         $configuration_array = $configuration->get();
 
         $yaml = Yaml::dump($configuration_array, 2);
-        
+
         $action = file_put_contents($config_file, $yaml, LOCK_EX);
 
         if ( $action === false ) throw new InstallerException("Cannot write comodojo-config file!");
@@ -52,11 +52,11 @@ class StaticConfigurationDumper {
         return true;
 
     }
-    
-    private function generateKey() {
-        
+
+    private static function generateKey() {
+
         return md5(uniqid(rand(), true), 0);
-        
+
     }
 
 }
