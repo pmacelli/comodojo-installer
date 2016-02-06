@@ -31,30 +31,27 @@ class InteractiveConfiguration {
     public static function start(Configuration $configuration, IOInterface $io) {
 
         $params = array();
-        
-        $io->write("<info>Starting comodojo base configuration.
-            Please answer the following questions as accurately and honestly as possible...</info>");
-        
+
         $params['database-model'] = $io->ask("Database model?", "MYSQLI");
-        
+
         $params['database-host'] = $io->ask("Database host?", "localhost");
-        
+
         $params['database-port'] = $io->askAndValidate("Database port?", function($value) {
             return is_int($value);
         }, 3, 3306);
-        
+
         $params['database-name'] = $io->ask("Database name?", "comodojo");
-        
+
         $params['database-user'] = $io->ask("Database user?", "comodojo");
-        
+
         $params['database-password'] = $io->askAndHideAnswer("Database password?");
-        
+
         $params['database-prefix'] = $io->ask("Common prefix for database tables?", "cmdj_");
-        
+
         foreach ($params as $param => $value) {
-            
+
             $configuration->set($param, $value);
-            
+
         }
 
     }

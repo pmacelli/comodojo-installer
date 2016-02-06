@@ -76,13 +76,16 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 
         $io = $event->getIO();
 
+        $io->write("<info>Starting comodojo base configuration</info>");
+        $io->write("<info>Please answer the following questions as accurately and honestly as possible...</info>");
+
         InteractiveConfiguration::start($this->configuration, $io);
 
-        StaticConfiguartionDumper::dump($this->configuration);
+        StaticConfigurationDumper::dump($this->configuration);
 
-        $io->write("<info>Static configuration dumped.");
-        $io->write("Remember to exec 'php comodojo.php install' to complete installation of framework.");
-        $io->write("Have fun!</info>");
+        $io->write("<info>Static configuration dumped.</info>");
+        $io->write("<info>Remember to exec 'php comodojo.php install' to complete installation of framework.</info>");
+        $io->write("<info>Have fun!</info>");
 
     }
 
