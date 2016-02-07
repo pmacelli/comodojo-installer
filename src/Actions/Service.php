@@ -69,11 +69,11 @@ class Service extends AbstractAction {
                 if ( !self::validateService($service) ) throw new InstallerException('Skipping invalid service in '.$package_name);
 
                 $route = $service["route"];
-                
+
                 $type = $service["type"];
-                
+
                 $class = $service["class"];
-                
+
                 $parameters = empty($service["parameters"]) ? array() : $service["parameters"];
 
                 switch ($action) {

@@ -33,9 +33,9 @@ abstract class AbstractAction implements ActionInterface {
     private $composer;
 
     private $io;
-    
+
     private $path;
-    
+
     private $package_installer;
 
     public function __construct(Composer $composer, IOInterface $io, $package_path, PackageInstaller $package_installer) {
@@ -43,9 +43,9 @@ abstract class AbstractAction implements ActionInterface {
         $this->composer = $composer;
 
         $this->io = $io;
-        
+
         $this->path = $package_path;
-        
+
         $this->package_installer = $package_installer;
 
     }
@@ -67,17 +67,17 @@ abstract class AbstractAction implements ActionInterface {
         return $this->composer;
 
     }
-    
+
     public function getPath() {
 
         return $this->path;
 
     }
-    
+
     public function getPackageInstaller() {
-        
+
         return $this->package_installer;
-        
+
     }
 
 }

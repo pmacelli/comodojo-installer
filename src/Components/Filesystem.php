@@ -27,41 +27,41 @@ use \Composer\Util\Filesystem as ComposerFilesystem;
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 class Filesystem extends ComposerFilesystem {
-    
+
     public function rcopy($source, $target) {
-        
+
         if (!is_dir($source)) {
-            
+
             copy($source, $target);
-            
+
             return;
-            
+
         }
-        
+
         $it = new RecursiveDirectoryIterator($source, RecursiveDirectoryIterator::SKIP_DOTS);
-        
+
         $ri = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::SELF_FIRST);
-        
+
         $this->ensureDirectoryExists($target);
-        
+
         foreach ($ri as $file) {
-            
+
             $targetPath = $target . DIRECTORY_SEPARATOR . $ri->getSubPathName();
-            
+
             if ($file->isDir()) {
-                
+
                 $this->ensureDirectoryExists($targetPath);
-                
+
             } else {
-                
+
                 copy($file->getPathname(), $targetPath);
-                
+
             }
-            
+
         }
-        
+
     }
-    
+
 }

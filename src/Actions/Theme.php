@@ -70,19 +70,25 @@ class Theme extends AbstractAction {
                 if ( !self::validateTheme($configuration) ) throw new InstallerException('Skipping invalid theme in '.$package_name);
 
                 $assets = $configuration['assets'];
-                
+
                 $description = empty($configuration['description']) ? null : $configuration['description'];
-                
+
                 $fs = new Filesystem();
-                
+
                 $path = $this->getPath();
+
+                $base_cfg = $this->getPackageInstaller()->configuration();
+
+                $base_path = $base_cfg->get('base-path');
+
+                $theme_assets = $base_cfg->get('theme-assets');
 
                 switch ($action) {
 
                     case 'install':
 
-                        $fs->rcopy($path.'/'.$assets, COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_THEME_ASSETS.'/'.$theme);
-                        
+                        $fs->rcopy($path.'/'.$assets, $base_path.'/'.$theme_assets.'/'.$theme);
+
                         $this->getPackageInstaller()->themes()->add($package_name, $theme, $description);
 
                         $io->write(" <info>+</info> added theme ".$theme);
@@ -94,8 +100,8 @@ class Theme extends AbstractAction {
                         $id = $this->getPackageInstaller()->themes()->getByName($name)->getId();
 
                         $this->getPackageInstaller()->themes()->delete($id);
-                        
-                        $fs->rmdir(COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_THEME_ASSETS.'/'.$theme);
+
+                        $fs->rmdir($base_path.'/'.$theme_assets.'/'.$theme);
 
                         $io->write(" <comment>-</comment> removed theme ".$theme);
 

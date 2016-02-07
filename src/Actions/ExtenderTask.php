@@ -46,9 +46,9 @@ class ExtenderTask extends AbstractAction {
         $io->write("<info>>>> Updating (extender) tasks from package ".$package_name."</info>");
 
         // $this->processTask($io, 'update', $package_name, $package_extra);
-        
+
         $this->processTask($io, 'uninstall', $package_name, $initial_extra);
-        
+
         $this->processTask($io, 'install', $package_name, $target_extra);
 
     }
@@ -70,17 +70,17 @@ class ExtenderTask extends AbstractAction {
             try {
 
                 if ( !self::validateTask($task) ) throw new InstallerException('Skipping invalid task in '.$package_name);
-                
+
                 $name = $task['name'];
-                
+
                 $class = $task['class'];
-                
+
                 $description = empty($task['description']) ? null : $task['description'];
 
                 switch ($action) {
 
                     case 'install':
-                        
+
                         $this->getPackageInstaller()->tasks()->add($package_name, $name, $class, $description);
 
                         $io->write(" <info>+</info> enabled task ".$name);
@@ -88,7 +88,7 @@ class ExtenderTask extends AbstractAction {
                         break;
 
                     case 'uninstall':
-                        
+
                         $id = $this->getPackageInstaller()->tasks()->byName($name)->getId();
 
                         $this->getPackageInstaller()->tasks()->delete($id);

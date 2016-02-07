@@ -35,9 +35,9 @@ class Setting extends AbstractAction {
 
         $io->write("<info>>>> Installing setting from package ".$package_name."</info>");
 
-        foreach ($package_extra as $setting => $value) {
+        foreach ($package_extra as $setting => $values) {
 
-            $this->addSetting($io, $package_name, $setting, $value);
+            $this->addSetting($io, $package_name, $setting, $values);
 
         }
 
@@ -50,31 +50,31 @@ class Setting extends AbstractAction {
         $io->write("<info>>>> Updating setting from package ".$package_name."</info>");
 
         $old_settings = array_keys($initial_extra);
-        
+
         $new_settings = array_keys($target_extra);
-        
+
         $uninstall = array_diff($old_settings, $new_settings);
 
         $install = array_diff($new_settings, $old_settings);
 
         $update = array_intersect($old_settings, $new_settings);
-        
+
         foreach ( $uninstall as $setting ) {
-            
+
             $this->removeSetting($io, $package_name, $setting, $initial_extra[$setting]);
-            
+
         }
-        
+
         foreach ( $install as $setting ) {
-            
+
             $this->addSetting($io, $package_name, $setting, $target_extra[$setting]);
-            
+
         }
-        
+
         foreach ( $update as $setting ) {
-            
+
             $this->updateSetting($io, $package_name, $setting, $initial_extra[$setting], $target_extra[$setting]);
-            
+
         }
 
     }
@@ -85,7 +85,7 @@ class Setting extends AbstractAction {
 
         $io->write("<info>>>> Removing setting from package ".$package_name."</info>");
 
-        foreach ($package_extra as $setting => $value) {
+        foreach ($package_extra as $setting => $values) {
 
             $this->addSetting($io, $package_name, $setting, $value);
 
@@ -93,13 +93,18 @@ class Setting extends AbstractAction {
 
     }
 
-    private function addSetting($io, $package_name, $setting, $value) {
-        
+    private function addSetting($io, $package_name, $setting, $values) {
+
         try {
 
-            if ( !self::validateSetting($value) ) throw new InstallerException('Skipping invalid setting '.$setting.' in '.$package_name);
+            if ( !self::validateSetting($values) ) throw new InstallerException('Skipping invalid setting '.$setting.' in '.$package_name);
 
-            $this->getPackageInstaller()->settings()->add($package_name, $setting, $value);
+            $value = $values["value"];
+            $constant = isset($values["constant"]) ? filter_var($values["constant"], FILTER_VALIDATE_BOOLEAN) : false;
+            $type = $values["type"];
+            $validate = isset($values["validate"]) ? $values["validate"] : null;
+
+            $this->getPackageInstaller()->settings()->add($package_name, $setting, $value, $constant, $type, $validate);
 
             $io->write(" <info>+</info> added setting ".$setting);
 
@@ -108,11 +113,11 @@ class Setting extends AbstractAction {
             $io->write('<error>Error processing setting: '.$e->getMessage().'</error>');
 
         }
-        
+
     }
-    
-    private function removeSetting($io, $package_name, $setting, $value) {
-        
+
+    private function removeSetting($io, $package_name, $setting) {
+
         try {
 
             if ( !self::validateSetting($value) ) throw new InstallerException('Skipping invalid setting '.$setting.' in '.$package_name);
@@ -128,33 +133,38 @@ class Setting extends AbstractAction {
             $io->write('<error>Error processing setting: '.$e->getMessage().'</error>');
 
         }
-        
+
     }
-    
-    private function updateSetting($io, $package_name, $setting, $old_value, $new_value) {
-        
+
+    private function updateSetting($io, $package_name, $setting, $old_values, $new_values) {
+
         try {
 
-            if ( !self::validateSetting($value) ) throw new InstallerException('Skipping invalid setting '.$setting.' in '.$package_name);
+            if ( !self::validateSetting($new_values) ) throw new InstallerException('Skipping invalid setting '.$setting.' in '.$package_name);
+
+            $value = $new_values["value"];
+            $constant = isset($new_values["constant"]) ? filter_var($new_values["constant"], FILTER_VALIDATE_BOOLEAN) : false;
+            $type = $new_values["type"];
+            $validate = isset($new_values["validate"]) ? $new_values["validate"] : null;
 
             $old = $this->getPackageInstaller()->settings()->getByName($setting);
-            
-            if ( $old->getValue() == $old_value ) {
-                
-                $this->getPackageInstaller()->settings()->update($old->getId(), $package_name, $setting, $new_value);
-                
+
+            if ( $old->getValue() == $old_values['value'] ) {
+
+                $this->getPackageInstaller()->settings()->update($old->getId(), $package_name, $setting, $value, $constant, $type, $validate);
+
                 $io->write(" <comment>~</comment> updated setting ".$setting);
-                
+
             } else if ( $io->askConfirmation("Replace modified setting ".$setting."?", false) === true ) {
-                
-                $this->getPackageInstaller()->settings()->update($old->getId(), $package_name, $setting, $new_value);
-                
+
+                $this->getPackageInstaller()->settings()->update($old->getId(), $package_name, $setting, $value, $constant, $type, $validate);
+
                 $io->write(" <comment>~</comment> updated setting ".$setting);
-                
+
             } else {
-                
+
                 $io->write(" <comment>x</comment> modified setting ".$setting." not replaced");
-                
+
             }
 
         } catch (Exception $e) {
@@ -162,12 +172,12 @@ class Setting extends AbstractAction {
             $io->write('<error>Error processing setting: '.$e->getMessage().'</error>');
 
         }
-        
+
     }
 
     private static function validateSetting($value) {
 
-        return is_scalar($value);
+        return !( empty($value["value"]) || empty($value["type"]) );
 
     }
 

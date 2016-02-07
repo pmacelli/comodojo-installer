@@ -120,7 +120,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 
         }
 
-        $configuration->set('installer-working-directory', getcwd());
+        $configuration->set('base-path', getcwd());
 
         return $configuration;
 
@@ -128,7 +128,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 
     private function loadStaticConfiguration(Configuration $configuration) {
 
-        $installer_wd = $configuration->get('installer-working-directory');
+        $installer_wd = $configuration->get('base-path');
 
         $static_folder = $configuration->get('static-config');
 

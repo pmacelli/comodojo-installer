@@ -32,21 +32,21 @@ class InteractiveConfiguration {
 
         $params = array();
 
-        $params['database-model'] = $io->ask("Database model?", "MYSQLI");
+        $params['database-model'] = $io->ask("> Database model? (MYSQLI) ", "MYSQLI");
 
-        $params['database-host'] = $io->ask("Database host?", "localhost");
+        $params['database-host'] = $io->ask("> Database host? (localhost) ", "localhost");
 
-        $params['database-port'] = $io->askAndValidate("Database port?", function($value) {
+        $params['database-port'] = $io->askAndValidate("> Database port? (3306) ", function($value) {
             return is_int($value);
         }, 3, 3306);
 
-        $params['database-name'] = $io->ask("Database name?", "comodojo");
+        $params['database-name'] = $io->ask("> Database name? (comodojo) ", "comodojo");
 
-        $params['database-user'] = $io->ask("Database user?", "comodojo");
+        $params['database-user'] = $io->ask("> Database user? (comodojo) ", "comodojo");
 
-        $params['database-password'] = $io->askAndHideAnswer("Database password?");
+        $params['database-password'] = $io->askAndHideAnswer("> Database password? ");
 
-        $params['database-prefix'] = $io->ask("Common prefix for database tables?", "cmdj_");
+        $params['database-prefix'] = $io->ask("> Common prefix for database tables? (cmdj_) ", "cmdj_");
 
         foreach ($params as $param => $value) {
 

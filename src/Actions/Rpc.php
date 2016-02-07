@@ -68,15 +68,15 @@ class Rpc extends AbstractAction {
             try {
 
                 if ( !self::validateRpc($rpc) ) throw new InstallerException('Skipping invalid rpc service in '.$package_name);
-                
+
                 $callback = $rpc['callback'];
-                
+
                 $method = empty($rpc['method']) ? null : $rpc['method'];
-                
+
                 $description = empty($rpc['description']) ? null : $rpc['description'];
-                
+
                 $signatures = isset($rpc["signatures"]) && is_array($rpc["signatures"]) ? $rpc["signatures"] : array();
-                
+
                 switch ($action) {
 
                     case 'install':
@@ -90,7 +90,7 @@ class Rpc extends AbstractAction {
                         break;
 
                     case 'uninstall':
-                        
+
                         $id = $this->getPackageInstaller()->rpc()->getByName($rpc_method)->getId();
 
                         $this->getPackageInstaller()->rpc()->delete($id);

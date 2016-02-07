@@ -50,31 +50,31 @@ class App extends AbstractAction {
         $io->write("<info>>>> Updating apps from ".$package_name."</info>");
 
         $old_apps = array_keys($initial_extra);
-        
+
         $new_apps = array_keys($target_extra);
-        
+
         $uninstall = array_diff($old_apps, $new_apps);
 
         $install = array_diff($new_apps, $old_apps);
 
         $update = array_intersect($old_apps, $new_apps);
-        
+
         foreach ( $uninstall as $app ) {
-            
+
             $this->removeApp($io, $package_name, $app, $initial_extra[$app]);
-            
+
         }
-        
+
         foreach ( $install as $app ) {
-            
+
             $this->addApp($io, $package_name, $app, $target_extra[$app]);
-            
+
         }
-        
+
         foreach ( $update as $app ) {
-            
+
             $this->updateApp($io, $package_name, $app, $initial_extra[$app], $target_extra[$app]);
-            
+
         }
 
     }
@@ -94,25 +94,31 @@ class App extends AbstractAction {
     }
 
     private function addApp($io, $package_name, $app, $configuration) {
-        
+
         $description = empty($configuration['description']) ? null : $configuration['description'];
-        
+
         $path = $this->getPath();
 
         $fs = new Filesystem();
-        
+
         $assets = empty($configuration['assets']) ? null : $configuration['assets'];
 
+        $base_cfg = $this->getPackageInstaller()->configuration();
+
+        $base_path = $base_cfg->get('base-path');
+
+        $app_assets = $base_cfg->get('app-assets');
+
         try {
-            
+
             if ( $assets !== null ) {
-            
-                $fs->rcopy($path.'/'.$assets, COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_APP_ASSETS.'/'.$app);    
-                
+
+                $fs->rcopy($path.'/'.$assets, $base_path.'/'.$app_assets.'/'.$app);
+
             }
 
             $this->getPackageInstaller()->apps()->add($package_name, $app, $description);
-            
+
             $io->write(" <info>+</info> added app ".$app);
 
         } catch (Exception $e) {
@@ -120,25 +126,31 @@ class App extends AbstractAction {
             $io->write('<error>Error processing app: '.$e->getMessage().'</error>');
 
         }
-        
+
     }
-    
+
     private function removeApp($io, $package_name, $app, $configuration) {
-        
+
         $fs = new Filesystem();
-        
+
         $assets = empty($configuration['assets']) ? null : $configuration['assets'];
-        
+
+        $base_cfg = $this->getPackageInstaller()->configuration();
+
+        $base_path = $base_cfg->get('base-path');
+
+        $app_assets = $base_cfg->get('app-assets');
+
         try {
 
             $id = $this->getPackageInstaller()->apps()->getByName($app)->getId();
 
             $this->getPackageInstaller()->apps()->delete($id);
-            
+
             if ( $assets !== null ) {
 
-                $fs->rmdir(COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_APP_ASSETS.'/'.$app);
-            
+                $fs->rmdir($base_path.'/'.$app_assets.'/'.$app);
+
             }
 
             $io->write(" <comment>-</comment> removed app ".$app);
@@ -148,37 +160,44 @@ class App extends AbstractAction {
             $io->write('<error>Error processing app: '.$e->getMessage().'</error>');
 
         }
-        
+
     }
-    
+
     private function updateApp($io, $package_name, $app, $old_configuration, $new_configuration) {
-        
+
         $description = empty($new_configuration['description']) ? null : $new_configuration['description'];
-        
+
         $path = $this->getPath();
 
         $fs = new Filesystem();
-        
+
         $old_assets = empty($old_configuration['assets']) ? null : $old_configuration['assets'];
-        
+
         $new_assets = empty($new_configuration['assets']) ? null : $new_configuration['assets'];
-        
+
+        $base_cfg = $this->getPackageInstaller()->configuration();
+
+        $base_path = $base_cfg->get('base-path');
+
+        $app_assets = $base_cfg->get('app-assets');
+
+
         try {
-            
+
             $id = $this->getPackageInstaller()->apps()->getByName($app)->getId();
-            
+
             $this->getPackageInstaller()->apps()->update($id, $package_name, $app, $description);
 
             if ( $old_assets !== null ) {
-                
+
                 $fs->rmdir(COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_APP_ASSETS.'/'.$app);
-                
+
             }
-            
+
             if ( $new_assets !== null ) {
-                
+
                 $fs->rcopy($path.'/'.$new_assets, COMODOJO_INSTALLER_WORKING_DIRECTORY.'/'.COMODOJO_INSTALLER_APP_ASSETS.'/'.$app);
-                
+
             }
 
             $io->write(" <comment>~</comment> updated app ".$app);
@@ -188,7 +207,7 @@ class App extends AbstractAction {
             $io->write('<error>Error processing app: '.$e->getMessage().'</error>');
 
         }
-        
+
     }
 
 }

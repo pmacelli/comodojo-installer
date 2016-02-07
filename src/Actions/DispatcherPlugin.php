@@ -69,13 +69,13 @@ class DispatcherPlugin extends AbstractAction {
                 if ( !self::validatePlugin($configuration) ) throw new InstallerException('Skipping invalid plugin in '.$package_name);
 
                 $plugin_name = $package_name.'-dispatcher-'.$plugin;
-                
+
                 $event = $configuration["event"];
-                
+
                 $class = $configuration["class"];
-                
+
                 $method = empty($configuration["method"]) ? null : $configuration["method"];
-                
+
                 switch ($action) {
 
                     case 'install':

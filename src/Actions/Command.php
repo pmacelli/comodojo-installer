@@ -64,25 +64,25 @@ class Command extends AbstractAction {
     private static function processCommand($io, $action, $package_name, $package_extra) {
 
         foreach ($package_extra as $command => $actions) {
-            
+
             try {
 
                 if ( !self::validateCommand($actions) ) throw new InstallerException('Skipping invalid command '.$command.' in '.$package_name);
-                
+
                 $class = $actions["class"];
 
                 $description = empty($actions["description"]) ? null : $actions["description"];
 
                 $aliases = isset($actions["aliases"]) && is_array($actions["aliases"]) ? $actions["aliases"] : array();
-                
+
                 $options = isset($actions["options"]) && is_array($actions["options"]) ? $actions["options"] : array();
-                
+
                 $arguments = isset($actions["arguments"]) && is_array($actions["arguments"]) ? $actions["arguments"] : array();
-    
+
                 switch ($action) {
 
                     case 'install':
-                        
+
                         $this->getPackageInstaller()
                             ->commands()
                             ->add($package_name, $command, $class, $description, $aliases, $options, $arguments);
@@ -92,7 +92,7 @@ class Command extends AbstractAction {
                         break;
 
                     case 'uninstall':
-                        
+
                         $id = $this->getPackageInstaller()->commands()->getByName($name)->getId();
 
                         $this->getPackageInstaller()->commands()->delete($id);

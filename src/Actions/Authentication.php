@@ -50,31 +50,31 @@ class Authentication extends AbstractAction {
         $io->write("<info>>>> Updating authentication providers from ".$package_name."</info>");
 
         $old_providers = array_keys($initial_extra);
-        
+
         $new_providers = array_keys($target_extra);
-        
+
         $uninstall = array_diff($old_providers, $new_providers);
 
         $install = array_diff($new_providers, $old_providers);
 
         $update = array_intersect($old_providers, $new_providers);
-        
+
         foreach ( $uninstall as $provider ) {
-            
+
             $this->removeAuthProvider($io, $package_name, $provider, $initial_extra[$provider]);
-            
+
         }
-        
+
         foreach ( $install as $provider ) {
-            
+
             $this->addAuthProvider($io, $package_name, $provider, $target_extra[$provider]);
-            
+
         }
-        
+
         foreach ( $update as $provider ) {
-            
+
             $this->updateAuthProvider($io, $package_name, $provider, $target_extra[$provider]);
-            
+
         }
 
     }
@@ -92,17 +92,17 @@ class Authentication extends AbstractAction {
         }
 
     }
-    
+
     private function addAuthProvider($io, $package_name, $provider, $configuration) {
-        
+
         try {
 
             if ( !self::validateProvider($configuration) ) throw new InstallerException('Skipping invalid authentication provider '.$provider.' in '.$package_name);
 
             $class = $configuration['class'];
-            
+
             $description = empty($configuration['description']) ? null : $configuration['description'];
-            
+
             $this->getPackageInstaller()->authentication()->add($package_name, $provider, $class, $description);
 
             $io->write(" <info>+</info> added authentication provider ".$provider);
@@ -112,15 +112,15 @@ class Authentication extends AbstractAction {
             $io->write('<error>Error processing authentication provider: '.$e->getMessage().'</error>');
 
         }
-        
+
     }
-    
+
     private function removeAuthProvider($io, $package_name, $provider, $configuration) {
-        
+
         try {
 
             if ( !self::validateProvider($configuration) ) throw new InstallerException('Skipping invalid authentication provider '.$provider.' in '.$package_name);
-            
+
             $id = $this->getPackageInstaller()->authentication()->getByName($provider)->getId();
 
             $this->getPackageInstaller()->authentication()->delete($id);
@@ -132,21 +132,21 @@ class Authentication extends AbstractAction {
             $io->write('<error>Error processing authentication provider: '.$e->getMessage().'</error>');
 
         }
-        
+
     }
-    
+
     private function updateAuthProvider($io, $package_name, $provider, $configuration) {
-        
+
         try {
 
             if ( !self::validateProvider($configuration) ) throw new InstallerException('Skipping invalid authentication provider '.$provider.' in '.$package_name);
 
             $class = $configuration['class'];
-            
+
             $description = empty($configuration['description']) ? null : $configuration['description'];
 
             $id = $this->getPackageInstaller()->authentication()->getByName($provider)->getId();
-            
+
             $this->getPackageInstaller()->authentication()->update($id, $package_name, $provider, $class, $description);
 
             $io->write(" <comment>~</comment> updated authentication provider ".$provider);
@@ -156,9 +156,9 @@ class Authentication extends AbstractAction {
             $io->write('<error>Error processing authentication provider: '.$e->getMessage().'</error>');
 
         }
-        
+
     }
-    
+
     private static function validateProvider($auth) {
 
         return !( empty($auth["class"]) );
