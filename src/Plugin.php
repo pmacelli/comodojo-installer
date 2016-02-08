@@ -50,11 +50,21 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 
         } else {
 
-            $package_installer = new PackageInstaller($this->configuration);
+            try {
 
-            $installer = new Installer($io, $composer, $package_installer);
+                $package_installer = new PackageInstaller($this->configuration);
 
-            $io->write('<comment>Comodojo configuration loaded, installer ready.</comment>');
+                $installer = new Installer($io, $composer, $package_installer);
+
+                $io->write('<comment>Comodojo configuration loaded, installer ready.</comment>');
+
+            } catch (Exception $e) {
+
+                $installer = new Installer($io, $composer);
+
+                $io->write('<error>Cannot init package manager: '.$e->getMessage().'</error>');
+
+            }
 
         }
 

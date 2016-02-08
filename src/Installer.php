@@ -99,8 +99,6 @@ class Installer extends LibraryInstaller {
      */
     public function uninstall(InstalledRepositoryInterface $repo, PackageInterface $package) {
 
-
-
         if ( is_null($this->package_installer ) {
 
             $this->io->write('<error>PackageInstaller not ready or missing configuration: package could not be installed.</error>');
