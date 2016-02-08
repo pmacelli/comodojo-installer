@@ -11,6 +11,7 @@ use \Comodojo\Dispatcher\Components\Configuration;
 use \Comodojo\Installer\Scripts\InteractiveConfiguration;
 use \Comodojo\Installer\Scripts\StaticConfigurationDumper;
 use \Symfony\Component\Yaml\Yaml;
+use \Exception;
 
 /**
  *

@@ -37,9 +37,12 @@ class StaticConfigurationDumper {
 
         $config_file = $installer_wd.'/'.$static_folder.'/comodojo-config.yml';
 
-        $configuration->set("authentication-key", self::generateKey());
-
-        $configuration->set("private-key", self::generateKey());
+        $configuration->set("authentication-key", self::generateKey())
+            ->set("private-key", self::generateKey())
+            ->set('cache-enabled', true)
+            ->set('cache-algorithm', 'pick-first')
+            ->set('startup-cache-enabled', true)
+            ->set('startup-cache-ttl', 86400);
 
         $configuration_array = $configuration->get();
 
