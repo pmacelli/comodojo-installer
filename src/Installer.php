@@ -63,7 +63,7 @@ class Installer extends LibraryInstaller {
 
         parent::install($repo, $package);
 
-        if ( is_null($this->package_installer ) {
+        if ( is_null($this->package_installer) ) {
 
             $this->io->write('<error>PackageInstaller not ready or missing configuration: package could not be installed.</error>');
 
@@ -82,7 +82,7 @@ class Installer extends LibraryInstaller {
 
         parent::update($repo, $initial, $target);
 
-        if ( is_null($this->package_installer ) {
+        if ( is_null($this->package_installer) ) {
 
             $this->io->write('<error>PackageInstaller not ready or missing configuration: package could not be installed.</error>');
 
@@ -99,7 +99,7 @@ class Installer extends LibraryInstaller {
      */
     public function uninstall(InstalledRepositoryInterface $repo, PackageInterface $package) {
 
-        if ( is_null($this->package_installer ) {
+        if ( is_null($this->package_installer) ) {
 
             $this->io->write('<error>PackageInstaller not ready or missing configuration: package could not be installed.</error>');
 
