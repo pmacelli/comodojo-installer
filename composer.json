@@ -20,7 +20,7 @@
     },
     "autoload": {
         "psr-4": {
-             "Comodojo\\Installer\\": "src"
+             "Comodojo\\Installer\\": "src/Comodojo/Installer"
          }
     },
     "extra": {

@@ -1,12 +1,6 @@
-<?php namespace Comodojo\Installer\Actions;
-
-use Composer\Composer;
-use Composer\IO\IOInterface;
-use Comodojo\Configuration\Installer as PackageInstaller;
+<?php namespace Comodojo\Installer\Components;
 
 /**
- *
- *
  * @package     Comodojo Framework
  * @author      Marco Giovinazzi <marco.giovinazzi@comodojo.org>
  * @author      Marco Castiello <marco.castiello@gmail.com>
@@ -28,14 +22,24 @@ use Comodojo\Configuration\Installer as PackageInstaller;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-interface ActionInterface {
+class ArrayOps {
 
-    public function __construct(Composer $composer, IOInterface $io, $package_path, PackageInstaller $package_installer);
+    public static function arrayCircularDiffKey($left, $right) {
 
-    public function install($package_name, $package_extra);
+        return array(
+            // only in left
+            array_diff_key($left, $right),
+            // common keys
+            array_intersect_key($left, $right),
+            // only in right
+            array_diff_key($right, $left)
+        );
 
-    public function update($package_name, $initial_extra, $target_extra);
+    }
 
-    public function uninstall($package_name, $package_extra);
+    public static function arrayFilterByKey($array_of_keys, $array_to_filter) {
 
+        return array_intersect_key($array_to_filter, array_flip($array_of_keys);
+
+    }
 }

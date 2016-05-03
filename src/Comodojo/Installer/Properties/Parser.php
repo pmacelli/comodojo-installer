@@ -1,7 +1,7 @@
 <?php namespace Comodojo\Installer\Parser;
 
 use Composer\Package\PackageInterface;
-use Comodojo\Installer\Registry\SupportedTypes;
+use Comodojo\Installer\Registry\SupportedActions;
 
 /**
  *
@@ -27,7 +27,7 @@ use Comodojo\Installer\Registry\SupportedTypes;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-class Parser {
+class Parser extends SupportedActions {
 
     public static function parse(PackageInterface $package) {
 
@@ -37,9 +37,13 @@ class Parser {
 
         $map = array();
 
-        foreach (SupportedTypes::getActions($type) as $field => $action) {
+        foreach (self::$actions as $action => $classmap) {
 
-            if ( isset($extra[$field]) ) $map[$action] = $extra[$field];
+            if ( array_key_exists($action, $extra) ) {
+
+                $map[$classmap] = $extra[$action];
+
+            }
 
         }
 

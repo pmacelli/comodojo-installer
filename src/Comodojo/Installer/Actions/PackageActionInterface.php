@@ -28,56 +28,14 @@ use Comodojo\Configuration\Installer as PackageInstaller;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-abstract class AbstractAction implements ActionInterface {
+interface PackageActionInterface {
 
-    private $composer;
+    public function __construct(Composer $composer, IOInterface $io, $package_path, PackageInstaller $package_installer);
 
-    private $io;
+    public function install($package_name, $package_version);
 
-    private $path;
+    public function update($initial_package_name, $initial_package_version, $target_package_name, $target_package_version);
 
-    private $package_installer;
-
-    public function __construct(Composer $composer, IOInterface $io, $package_path, PackageInstaller $package_installer) {
-
-        $this->composer = $composer;
-
-        $this->io = $io;
-
-        $this->path = $package_path;
-
-        $this->package_installer = $package_installer;
-
-    }
-
-    abstract public function install($package_name, $package_extra);
-
-    abstract public function update($package_name, $initial_extra, $target_extra);
-
-    abstract public function uninstall($package_name, $package_extra);
-
-    public function getIO() {
-
-        return $this->io;
-
-    }
-
-    public function getComposer() {
-
-        return $this->composer;
-
-    }
-
-    public function getPath() {
-
-        return $this->path;
-
-    }
-
-    public function getPackageInstaller() {
-
-        return $this->package_installer;
-
-    }
+    public function uninstall($package_name, $package_version);
 
 }
