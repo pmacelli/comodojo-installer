@@ -88,7 +88,7 @@ class Installer extends LibraryInstaller {
             $this->io->write('<error>PackageInstaller not ready or missing configuration: package could not be installed.</error>');
 
         } else {
-,
+
             $this->packageUpdate($initial, $target);
 
         }
@@ -220,7 +220,7 @@ class Installer extends LibraryInstaller {
 
         $target_actions_map = Parser::parse($target);
 
-        list($uninstall, $update, $install) ArrayOps::arrayCircularDiffKey($initial_actions_map, $target_actions_map);
+        list($uninstall, $update, $install) = ArrayOps::arrayCircularDiffKey($initial_actions_map, $target_actions_map);
 
         foreach ($uninstall as $action => $extra) {
 

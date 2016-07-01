@@ -24,7 +24,7 @@
 
 class SupportedActions {
 
-    protected static $actions = array() {
+    protected static $actions = array(
         'comodojo-dispatcher-plugin-load' => 'Comodojo\\Installer\\Actions\\DispatcherPlugin',
         'comodojo-extender-plugin-load' => 'Comodojo\\Installer\\Actions\\ExtenderPlugin',
         'comodojo-application-register' => 'Comodojo\\Installer\\Actions\\App',
@@ -35,6 +35,6 @@ class SupportedActions {
         'comodojo-command-register' => 'Comodojo\\Installer\\Actions\\Command',
         'comodojo-theme-register' => 'Comodojo\\Installer\\Actions\\Theme',
         'comodojo-authentication-register' => 'Comodojo\\Installer\\Actions\\Authentication'
-    }
+    );
 
 }

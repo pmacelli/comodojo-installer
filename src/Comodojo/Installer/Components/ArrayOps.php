@@ -39,7 +39,7 @@ class ArrayOps {
 
     public static function arrayFilterByKey($array_of_keys, $array_to_filter) {
 
-        return array_intersect_key($array_to_filter, array_flip($array_of_keys);
+        return array_intersect_key($array_to_filter, array_flip($array_of_keys));
 
     }
 }
