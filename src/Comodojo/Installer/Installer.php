@@ -37,12 +37,15 @@ class Installer extends LibraryInstaller {
 
     protected $supported_drivers;
 
+    protected $supported_packages;
+
     protected $drivers = [];
 
     public function __construct(IOInterface $io, Composer $composer, Configuration $configuration, InstallerConfiguration $installer_configuration) {
 
-        $extra = $installer_configuration->getPackageExtra();
+        $this->supported_packages = $installer_configuration->getPackageTypes();
 
+        $extra = $installer_configuration->getPackageExtra();
         $this->supported_drivers = array_keys($extra);
 
         foreach ($extra as $name => $specs) {
@@ -58,9 +61,7 @@ class Installer extends LibraryInstaller {
      */
     public function supports($packageType) {
 
-        $types = $this->installer_configuration->getPackageTypes();
-
-        return in_array($packageType, $types);
+        return in_array($packageType, $this->supported_packages);
 
     }
 
