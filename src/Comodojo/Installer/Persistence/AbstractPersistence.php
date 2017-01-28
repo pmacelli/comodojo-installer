@@ -22,7 +22,7 @@ use \Composer\IO\IOInterface;
  * THE SOFTWARE.
  */
 
-abstract class AbstractAction implements InstallerPersistenceInterface {
+abstract class AbstractPersistence implements InstallerPersistenceInterface {
 
     protected $composer;
 

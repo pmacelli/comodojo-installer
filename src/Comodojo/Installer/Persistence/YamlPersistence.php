@@ -19,7 +19,7 @@ use \Comodojo\Exception\InstallerException;
  * THE SOFTWARE.
  */
 
-class YamlPersistence extends AbstractAction {
+class YamlPersistence extends AbstractPersistence {
 
     const DEFAULT_DEPTH = 4;
 

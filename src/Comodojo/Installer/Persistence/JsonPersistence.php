@@ -18,7 +18,7 @@ use \Comodojo\Exception\InstallerException;
  * THE SOFTWARE.
  */
 
-class JsonPersistence extends AbstractAction {
+class JsonPersistence extends AbstractPersistence {
 
     public function load() {
 
