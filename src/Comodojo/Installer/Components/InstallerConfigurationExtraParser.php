@@ -19,7 +19,7 @@ use \Comodojo\Exception\InstallerException;
  * THE SOFTWARE.
  */
 
-class InstallerConfigurationGlobalParser {
+class InstallerConfigurationExtraParser {
 
     protected $properties;
 
