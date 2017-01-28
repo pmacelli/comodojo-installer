@@ -41,7 +41,7 @@ class Installer extends LibraryInstaller {
 
     public function __construct(IOInterface $io, Composer $composer, Configuration $configuration, InstallerConfiguration $installer_configuration) {
 
-        $extra = $this->installer_configuration->getPackageExtra();
+        $extra = $installer_configuration->getPackageExtra();
 
         $this->supported_drivers = array_keys($extra);
 
