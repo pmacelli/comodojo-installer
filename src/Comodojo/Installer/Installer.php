@@ -1,17 +1,15 @@
 <?php namespace Comodojo\Installer;
 
-use Composer\Composer;
-use Composer\IO\IOInterface;
-use Composer\Installer\LibraryInstaller;
-use Composer\Package\PackageInterface;
-use Composer\Repository\InstalledRepositoryInterface;
-use Comodojo\Exception\InstallerException;
-use Comodojo\Installer\Components\ArrayOps;
-use Comodojo\Installer\Properties\Parser;
-use Comodojo\Installer\Actions\Package as PackageManager;
-use Comodojo\Installer\Registry\SupportedTypes;
-use Comodojo\Configuration\Installer as PackageInstaller;
-
+use \Composer\Composer;
+use \Composer\IO\IOInterface;
+use \Composer\Installer\LibraryInstaller;
+use \Composer\Package\PackageInterface;
+use \Composer\Repository\InstalledRepositoryInterface;
+use \Comodojo\Installer\Components\InstallerConfiguration;
+use \Comodojo\Foundation\Base\Configuration;
+use \Comodojo\Exception\InstallerException;
+use \Comodojo\Installer\Components\InstallerDriverManager;
+use \Comodojo\Foundation\Utils\ArrayOps;
 
 /**
  * @package     Comodojo Framework
@@ -37,11 +35,19 @@ use Comodojo\Configuration\Installer as PackageInstaller;
 
 class Installer extends LibraryInstaller {
 
-    protected $package_installer;
+    protected $supported_drivers;
 
-    public function __construct(IOInterface $io, Composer $composer, PackageInstaller $package_installer = null) {
+    protected $drivers = [];
 
-        $this->package_installer = $package_installer;
+    public function __construct(IOInterface $io, Composer $composer, Configuration $configuration, InstallerConfiguration $installer_configuration) {
+
+        $extra = $this->installer_configuration->getPackageExtra();
+
+        $this->supported_drivers = array_keys($extra);
+
+        foreach ($extra as $name => $specs) {
+            $this->drivers[$name] = new InstallerDriverManager($composer, $io, $configuration, $specs);
+        }
 
         parent::__construct($io, $composer);
 
@@ -52,8 +58,9 @@ class Installer extends LibraryInstaller {
      */
     public function supports($packageType) {
 
-        //return in_array($packageType, SupportedTypes::getTypes());
-        return $packageType == 'comodojo-package';
+        $types = $this->installer_configuration->getPackageTypes();
+
+        return in_array($packageType, $types);
 
     }
 
@@ -64,15 +71,7 @@ class Installer extends LibraryInstaller {
 
         parent::install($repo, $package);
 
-        if ( is_null($this->package_installer) ) {
-
-            $this->io->write('<error>PackageInstaller not ready or missing configuration: package could not be installed.</error>');
-
-        } else {
-
-            $this->packageInstall($package);
-
-        }
+        $this->packageInstall($package);
 
     }
 
@@ -83,15 +82,7 @@ class Installer extends LibraryInstaller {
 
         parent::update($repo, $initial, $target);
 
-        if ( is_null($this->package_installer) ) {
-
-            $this->io->write('<error>PackageInstaller not ready or missing configuration: package could not be installed.</error>');
-
-        } else {
-
-            $this->packageUpdate($initial, $target);
-
-        }
+        $this->packageUpdate($initial, $target);
 
     }
 
@@ -100,15 +91,7 @@ class Installer extends LibraryInstaller {
      */
     public function uninstall(InstalledRepositoryInterface $repo, PackageInterface $package) {
 
-        if ( is_null($this->package_installer) ) {
-
-            $this->io->write('<error>PackageInstaller not ready or missing configuration: package could not be installed.</error>');
-
-        } else {
-
-            $this->packageUninstall($package);
-
-        }
+        $this->packageUninstall($package);
 
         parent::uninstall($repo, $package);
 
@@ -119,32 +102,19 @@ class Installer extends LibraryInstaller {
         // get package properties
 
         $package_name = $package->getPrettyName();
-
         $package_path = $this->composer->getInstallationManager()->getInstallPath($package);
-
         $package_version = $package->getPrettyVersion();
+        $package_extra = $package->getExtra();
 
         // parse package content
+        $supported_fields = ArrayOps::filterByKeys($this->supported_drivers, $package_extra);
 
-        $actions_map = Parser::parse($package);
+        // invoke driver
+        foreach ($supported_fields as $name => $config) {
 
-        // get local installer
-
-        $installer = $this->getPackageInstaller();
-
-        // init packagemanager and install package
-
-        $package_manager = new PackageManager($this->composer, $this->io, $package_path, $installer);
-
-        $package_id = $package_manager->install($package_name, $package_version);
-
-        // perform actions
-
-        foreach ($actions_map as $action_class => $extra) {
-
-            $action = new $action_class($this->composer, $this->io, $package_path, $installer);
-
-            $action->install($package_id, $extra);
+            $repo = $this->drivers[$name];
+            $driver = $repo->getDriver();
+            $driver->install($package_name, $package_path, $config);
 
         }
 
@@ -155,34 +125,21 @@ class Installer extends LibraryInstaller {
         // get package properties
 
         $package_name = $package->getPrettyName();
-
         $package_path = $this->composer->getInstallationManager()->getInstallPath($package);
-
         $package_version = $package->getPrettyVersion();
+        $package_extra = $package->getExtra();
 
         // parse package content
+        $supported_fields = ArrayOps::filterByKeys($this->supported_drivers, $package_extra);
 
-        // $actions_map = Parser::parse($package);
+        // invoke driver
+        foreach ($supported_fields as $name => $config) {
 
-        // get local installer
+            $repo = $this->drivers[$name];
+            $driver = $repo->getDriver();
+            $driver->uninstall($package_name, $package_path, $config);
 
-        $installer = $this->getPackageInstaller();
-
-        // init packagemanager and remove package
-
-        $package_manager = new PackageManager($this->composer, $this->io, $package_path, $installer);
-
-        $package_manager->uninstall($package_name, $package_version);
-
-        // perform actions
-
-        // foreach ($actions_map as $action_class => $extra) {
-        //
-        //     $action = new $action_class($this->composer, $this->io, $package_path, $installer);
-        //
-        //     $action->install($package_id, $extra);
-        //
-        // }
+        }
 
     }
 
@@ -191,66 +148,46 @@ class Installer extends LibraryInstaller {
         // get initial package properties
 
         $initial_package_name = $initial->getPrettyName();
-
         $initial_package_path = $this->composer->getInstallationManager()->getInstallPath($initial);
-
         $initial_package_version = $initial->getPrettyVersion();
+        $initial_package_extra = $initial->getExtra();
 
         // get target package properties
 
         $target_package_name = $target->getPrettyName();
-
         $target_package_path = $this->composer->getInstallationManager()->getInstallPath($target);
-
         $target_package_version = $target->getPrettyVersion();
+        $target_package_extra = $target->getExtra();
 
-        // get local installer
+        // parse package content
+        $initial_supported_fields = ArrayOps::filterByKeys($this->supported_drivers, $initial_package_extra);
+        $target_supported_fields = ArrayOps::filterByKeys($this->supported_drivers, $target_package_extra);
 
-        $installer = $this->getPackageInstaller();
+        list($uninstall, $update, $install) = ArrayOps::arrayCircularDiffKeys($initial_supported_fields, $target_supported_fields);
 
-        // init packagemanager and update package, just in case
+        foreach ($uninstall as $name => $config) {
 
-        $package_manager = new PackageManager($this->composer, $this->io, $initial_package_path, $installer);
-
-        $package_id = $package_manager->update($initial_package_name, $initial_package_version, $target_package_name, $target_package_version);
-
-        // map actions
-
-        $initial_actions_map = Parser::parse($initial);
-
-        $target_actions_map = Parser::parse($target);
-
-        list($uninstall, $update, $install) = ArrayOps::arrayCircularDiffKey($initial_actions_map, $target_actions_map);
-
-        foreach ($uninstall as $action => $extra) {
-
-            $action_instance = new $action($this->composer, $this->io, $initial_package_path, $installer);
-
-            $action_instance->uninstall($package_id, $extra);
+            $repo = $this->drivers[$name];
+            $driver = $repo->getDriver();
+            $driver->uninstall($initial_package_name, $initial_package_path, $config);
 
         }
 
-        foreach ($install as $action => $extra) {
+        foreach ($install as $name => $config) {
 
-            $action_instance = new $action($this->composer, $this->io, $target_package_path, $installer);
-
-            $action_instance->install($package_id, $extra);
-
-        }
-
-        foreach ($update as $action => $extra) {
-
-            $action_instance = new $action($this->composer, $this->io, $target_package_path, $installer);
-
-            $action_instance->update($package_id, $this->initial_actions_map[$action], $extra);
+            $repo = $this->drivers[$name];
+            $driver = $repo->getDriver();
+            $driver->uninstall($target_package_name, $target_package_path, $config);
 
         }
 
-    }
+        foreach ($update as $name => $config) {
 
-    protected function getPackageInstaller() {
+            $repo = $this->drivers[$name];
+            $driver = $repo->getDriver();
+            $driver->update($target_package_name, $target_package_path, $initial_supported_fields[$name], $config);
 
-        return $this->package_installer;
+        }
 
     }
 

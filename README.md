@@ -1,2 +1,3 @@
 # comodojo-installer
-Comodojo Package Installer
+
+A modular installer for the Comodojo Project

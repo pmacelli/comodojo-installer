@@ -1,8 +1,8 @@
 {
     "name": "comodojo/comodojo-installer",
     "type": "composer-plugin",
-    "license": "GPL-3.0+",
-    "description": "Comodojo Package Installer",
+    "license": "MIT",
+    "description": "A modular installer for the Comodojo Project",
     "keywords": [
         "comodojo",
         "installer"
@@ -28,13 +28,11 @@
     },
     "require": {
         "composer-plugin-api": "^1.0",
-        "comodojo/comodojo-framework": "dev-master",
-        "comodojo/dispatcher.framework": "^4.0",
-        "comodojo/exceptions": "^1.0",
+        "comodojo/foundation": "dev-master",
         "symfony/yaml": "^3.0"
     },
     "require-dev": {
-        "composer/composer": "1.0.*@dev",
+        "composer/composer": "^1.0",
         "phpunit/phpunit": "^4.0|^5.0",
         "scrutinizer/ocular": "^1.0"
     }

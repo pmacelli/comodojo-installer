@@ -3,163 +3,106 @@
 use \Composer\Composer;
 use \Composer\IO\IOInterface;
 use \Composer\Plugin\PluginInterface;
-use \Composer\Plugin\PluginEvents;
 use \Composer\EventDispatcher\EventSubscriberInterface;
 use \Composer\EventDispatcher\Event;
-use \Comodojo\Configuration\Installer as PackageInstaller;
-use \Comodojo\Dispatcher\Components\Configuration;
-use \Comodojo\Installer\Scripts\InteractiveConfiguration;
-use \Comodojo\Installer\Scripts\StaticConfigurationDumper;
-use \Symfony\Component\Yaml\Yaml;
+use \Comodojo\Installer\Components\InstallerConfiguration;
+use \Comodojo\Foundation\Base\Configuration;
 use \Exception;
 
 /**
- *
- *
  * @package     Comodojo Framework
  * @author      Marco Giovinazzi <marco.giovinazzi@comodojo.org>
- * @author      Marco Castiello <marco.castiello@gmail.com>
- * @license     GPL-3.0+
+ * @license     MIT
  *
  * LICENSE:
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 class Plugin implements PluginInterface, EventSubscriberInterface {
 
+    protected $installer_configuration;
+
+    protected $comodojo_configuration;
+
+    protected $comodojo_configuration_persistence;
+
     public function activate(Composer $composer, IOInterface $io) {
 
-        $this->configuration = $this->loadInstallerConfig($composer);
+        // First, get current extra field and init a valid installer configuration
+        $extra = $composer->getPackage()->getExtra();
+        $parameters = isset($extra['comodojo-installer']) && is_array($extra['comodojo-installer']) ? $extra['comodojo-installer'] : [];
+        $this->installer_configuration = new InstallerConfiguration($parameters);
 
-        if ( !$this->loadStaticConfiguration($this->configuration) ) {
+        // Second, setup the persistence interface for the global config with "fake" configuration
+        $persistence = $this->installer_configuration->getGlobalConfig()->getPersistence();
+        $parameters = $this->installer_configuration->getGlobalConfig()->getParams();
+        $this->comodojo_configuration_persistence = new $persistence($composer, $io, new Configuration(), $parameters);
 
-            $io->write('<comment>Comodojo configuration not (yet) available.</comment>');
+        // Third, load current configuration, if any
+        $this->comodojo_configuration = $this->loadComodojoConfiguration($io, $extra);
 
-            $installer = new Installer($io, $composer);
-
-        } else {
-
-            try {
-
-                $package_installer = new PackageInstaller($this->configuration);
-
-                $installer = new Installer($io, $composer, $package_installer);
-
-                $io->write('<comment>Comodojo configuration loaded, installer ready.</comment>');
-
-            } catch (Exception $e) {
-
-                $installer = new Installer($io, $composer);
-
-                $io->write('<error>Cannot init package manager: '.$e->getMessage().'</error>');
-
-            }
-
-        }
-
+        // Finally, plug the installer!
+        $installer = new Installer($io, $composer, $this->comodojo_configuration, $this->installer_configuration);
         $composer->getInstallationManager()->addInstaller($installer);
 
     }
 
     public static function getSubscribedEvents() {
 
-        return array(
-            'post-create-project-cmd' => array(
-                array('startInteractiveCommands', 0)
-            )
-        );
+        return ['post-create-project-cmd' => 'startPostInstallScript'];
 
     }
 
-    public function startInteractiveCommands(Event $event) {
+    public function startPostInstallScript(Event $event) {
+
+        $script = $this->installer_configuration->getPostInstallScript();
+        $configuration = $this->comodojo_configuration;
 
         $io = $event->getIO();
 
-        $io->write("<info>Starting comodojo base configuration</info>");
-        $io->write("<info>Please answer the following questions as accurately and honestly as possible...</info>");
+        // If a script is in queue, start it now
+        if ( $script !== null ) {
+            $io->write("<info>Starting post-install-script</info>");
+            $post_install_script = new $script($io, $configuration);
+            $io->write("<info>Post-install-script ends</info>");
+        }
 
-        InteractiveConfiguration::start($this->configuration, $io);
-
-        StaticConfigurationDumper::dump($this->configuration);
-
-        $io->write("<info>Static configuration dumped.</info>");
-        $io->write("<info>Remember to exec 'php comodojo.php install' to complete installation of framework.</info>");
-        $io->write("<info>Have fun!</info>");
+        // Dump static global configuration
+        $io->write("<info>Persisting global configuration</info>");
+        $global_config = $configuration->get();
+        $this->comodojo_configuration_persistence->dump($global_config);
 
     }
 
-    private function loadInstallerConfig(Composer $composer) {
+    public function loadComodojoConfiguration(IOInterface $io, array $extra) {
 
-        $extra = $composer->getPackage()->getExtra();
-
-        $installer_default_config = array(
-            'app-assets' => 'public/apps',
-            'theme-assets' => 'public/themes',
-            'local-cache' => 'cache',
-            'static-config' => 'config',
-            'local-logs' => 'logs',
-            'local-database' => 'database'
-        );
-
-        if ( isset($extra['comodojo-installer-paths']) && is_array($extra['comodojo-installer-paths']) ) {
-
-            $installer_config = array_replace($installer_default_config, $extra['comodojo-installer-paths']);
-
-        } else {
-
-            $installer_config = $installer_default_config;
-
+        // check if "real" configuration object is already in, and eventually load it
+        $configuration = $this->comodojo_configuration_persistence->load();
+        if ( !empty($configuration) ) {
+            $io->write('<comment>Global configuration object found ad loaded</comment>');
+            return new Configuration($configuration);
         }
 
-        $configuration = new Configuration();
-
-        foreach ( $installer_config as $setting => $value ) {
-
-            $configuration->set($setting, $value);
-
+        // if not, load it from root composer.json
+        $field = $this->installer_configuration->getGlobalConfig()->getExtraField();
+        if ( isset($extra[$field]) && is_array($extra[$field]) ) {
+            $io->write('<comment>Global configuration retrieved from composer.json</comment>');
+            $configuration = new Configuration($extra[$field]);
+            // overwrite base-path with real one
+            $configuration->set('base-path', getcwd());
+            return $configuration;
         }
 
-        $configuration->set('base-path', getcwd());
-
-        return $configuration;
-
-    }
-
-    private function loadStaticConfiguration(Configuration $configuration) {
-
-        $installer_wd = $configuration->get('base-path');
-
-        $static_folder = $configuration->get('static-config');
-
-        $config_file = $installer_wd.'/'.$static_folder.'/comodojo-config.yml';
-
-        if ( is_file($config_file) && is_readable($config_file) && $yaml = file_get_contents($config_file) ) {
-
-            $data = Yaml::parse($yaml);
-
-            foreach( $data as $parameter => $value ) {
-
-                $this->configuration->set($parameter, $value);
-
-            }
-
-            return true;
-
-        }
-
-        return false;
+        // no global config here, init a fake one :-(
+        $io->write('<comment>No global configuration, an empty one will be used</comment>');
+        return new Configuration(['base-path' => getcwd()]);
 
     }
 
