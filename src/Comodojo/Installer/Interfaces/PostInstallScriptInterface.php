@@ -1,8 +1,6 @@
 <?php namespace Comodojo\Installer\Interfaces;
 
 use \Comodojo\Foundation\Base\Configuration;
-use \Comodojo\Installer\Components\InstallerParameters;
-use \Composer\Composer;
 use \Composer\IO\IOInterface;
 
 /**
