@@ -51,8 +51,8 @@ class InstallerConfigurationGlobalParser {
         $this->properties = ArrayOps::replaceStrict($default_properties, $parameters);
 
         $default_parameters = [
-            "config-file" => DEFAULT_CONFIG_FILE,
-            "depth" => DEFAULT_CONFIG_DEPTH
+            "config-file" => self::DEFAULT_CONFIG_FILE,
+            "depth" => self::DEFAULT_CONFIG_DEPTH
         ];
 
         if ( isset($parameters['params']) && is_array($parameters['params']) ) {
