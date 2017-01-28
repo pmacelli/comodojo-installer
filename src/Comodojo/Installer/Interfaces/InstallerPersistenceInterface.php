@@ -25,8 +25,8 @@ interface InstallerPersistenceInterface {
 
     public function __construct(Composer $composer, IOInterface $io, Configuration $configuration, InstallerParameters $parameters);
 
-    public function load($name);
+    public function load();
 
-    public function dump($name, array $data);
+    public function dump(array $data);
 
 }
