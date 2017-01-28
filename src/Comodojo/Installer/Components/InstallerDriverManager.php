@@ -2,8 +2,7 @@
 
 use \Composer\Composer;
 use \Composer\IO\IOInterface;
-use \Comodojo\Foundation\Utils\ArrayOps;
-use \Comodojo\Exception\InstallerException;
+use \Comodojo\Foundation\Base\Configuration;
 
 /**
  * @package     Comodojo Framework
