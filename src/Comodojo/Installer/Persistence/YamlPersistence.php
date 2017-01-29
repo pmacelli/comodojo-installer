@@ -29,7 +29,7 @@ class YamlPersistence extends AbstractPersistence {
 
         if ( $name === null ) throw new InstallerException("No config-file name specified");
 
-        if ( file_exists($name) && is_readable($name) ) Yaml::parse(file_get_contents($name));
+        if ( file_exists($name) && is_readable($name) ) return Yaml::parse(file_get_contents($name));
 
         return [];
 

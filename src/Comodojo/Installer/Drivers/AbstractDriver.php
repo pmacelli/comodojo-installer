@@ -1,10 +1,11 @@
 <?php namespace Comodojo\Installer\Drivers;
 
 use \Comodojo\Installer\Interfaces\InstallerDriverInterface;
-use \Comodojo\Installer\Components\InstallerParameters;
-use \Comodojo\Foundation\Base\Configuration;
 use \Composer\Composer;
 use \Composer\IO\IOInterface;
+use \Comodojo\Foundation\Base\Configuration;
+use \Comodojo\Installer\Components\InstallerParameters;
+use \Comodojo\Installer\Interfaces\InstallerPersistenceInterface;
 
 /**
  * @package     Comodojo Framework
@@ -22,7 +23,7 @@ use \Composer\IO\IOInterface;
  * THE SOFTWARE.
  */
 
-abstract class AbstractDrivers implements InstallerDriverInterface {
+abstract class AbstractDriver implements InstallerDriverInterface {
 
     protected $composer;
 

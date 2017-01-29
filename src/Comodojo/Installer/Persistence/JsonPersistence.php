@@ -42,7 +42,7 @@ class JsonPersistence extends AbstractPersistence {
 
         if (
             ( file_exists($name) && is_writable($name) ) ||
-            is_writeable(pathinfo($file, PATHINFO_DIRNAME))
+            is_writeable(pathinfo($name, PATHINFO_DIRNAME))
         ) return file_put_contents($name, $filedata, LOCK_EX);
 
         throw new InstallerException("Cannot write to configuration file $name");

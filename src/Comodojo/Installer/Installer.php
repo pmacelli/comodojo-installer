@@ -164,7 +164,7 @@ class Installer extends LibraryInstaller {
         $initial_supported_fields = ArrayOps::filterByKeys($this->supported_drivers, $initial_package_extra);
         $target_supported_fields = ArrayOps::filterByKeys($this->supported_drivers, $target_package_extra);
 
-        list($uninstall, $update, $install) = ArrayOps::arrayCircularDiffKeys($initial_supported_fields, $target_supported_fields);
+        list($uninstall, $update, $install) = ArrayOps::circularDiffKeys($initial_supported_fields, $target_supported_fields);
 
         foreach ($uninstall as $name => $config) {
 

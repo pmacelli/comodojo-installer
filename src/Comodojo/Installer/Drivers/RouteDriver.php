@@ -1,5 +1,7 @@
 <?php namespace Comodojo\Installer\Drivers;
 
+use \Comodojo\Foundation\Utils\ArrayOps;
+
 /**
  * @package     Comodojo Framework
  * @author      Marco Giovinazzi <marco.giovinazzi@comodojo.org>
@@ -16,7 +18,7 @@
  * THE SOFTWARE.
  */
 
-class RouteDriver extends AbstractDrivers {
+class RouteDriver extends AbstractDriver {
 
     // This is an example of how the route definition inside the composer.json should be implemented
     //
@@ -119,7 +121,7 @@ class RouteDriver extends AbstractDrivers {
             }
 
             $raw_route = ArrayOps::replaceStrict($this->base_route, $specs);
-            $config[$route] = self::buildRoute($route, $raw_route);
+            $config[$route] = self::buildRoute($route, $raw_route, $package_name);
             $io->write(" <info>+</info> enabled route [$route]");
 
         }
@@ -144,7 +146,6 @@ class RouteDriver extends AbstractDrivers {
                 $io->write("<error>----------------------------</error>");
                 $io->write("<error>Found existing route $route that belongs to ".$config[$route]["package_name"]);
                 $io->write("<error>----------------------------</error>");
-                continue;
             } else {
                 $io->write("<warning>!</warning> Missing route [$route]");
             }
@@ -155,7 +156,7 @@ class RouteDriver extends AbstractDrivers {
 
     }
 
-    protected static function buildRoute($route, $raw_route) {
+    protected static function buildRoute($route, $raw_route, $package_name) {
 
         $query = [$route];
 
@@ -167,6 +168,8 @@ class RouteDriver extends AbstractDrivers {
 
             }
 
+            $query = implode("/", $query);
+
         } else {
 
             $query[] = $raw_route["query"];
@@ -175,6 +178,7 @@ class RouteDriver extends AbstractDrivers {
 
         unset($raw_route["query"]);
         $raw_route["route"] = $query;
+        $raw_route["package_name"] = $package_name;
 
         return $raw_route;
 

@@ -1,5 +1,7 @@
 <?php namespace Comodojo\Installer\Drivers;
 
+use \Comodojo\Foundation\Utils\ArrayOps;
+
 /**
  * @package     Comodojo Framework
  * @author      Marco Giovinazzi <marco.giovinazzi@comodojo.org>
@@ -16,7 +18,7 @@
  * THE SOFTWARE.
  */
 
-class PluginDriver extends AbstractDrivers {
+class PluginDriver extends AbstractDriver {
 
     // This is an example of how the plugin definition inside the composer.json should be implemented
     //

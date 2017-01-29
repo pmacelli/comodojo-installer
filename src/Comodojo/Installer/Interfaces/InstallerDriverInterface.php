@@ -4,6 +4,7 @@ use \Composer\Composer;
 use \Composer\IO\IOInterface;
 use \Comodojo\Foundation\Base\Configuration;
 use \Comodojo\Installer\Components\InstallerParameters;
+use \Comodojo\Installer\Interfaces\InstallerPersistenceInterface;
 
 /**
  * @package     Comodojo Framework
