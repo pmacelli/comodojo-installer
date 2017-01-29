@@ -33,7 +33,7 @@ class InstallerDriverManager {
         InstallerConfigurationExtraParser $extra
     ) {
 
-        $driver = $extra->getPersistence();
+        $driver = $extra->getDriver();
         $persistence = $extra->getPersistence();
         $parameters = $extra->getParams();
 
