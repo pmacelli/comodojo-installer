@@ -34,8 +34,10 @@ class InstallerConfigurationExtraParser {
     //         }
     //     },
     //     "plugins": {
-    //         "driver": "\\Comodojo\\Installer\\Drivers\\PluginDriver",
-    //         "persistence": "\\Comodojo\\Installer\\Persistence\\YamlPersistence",
+    //         "driver": "\\My\\Installer\\Drivers\\PluginDriver",
+    //         "driver-source": "src/My/Installer/Drivers/PluginDriver.php",
+    //         "persistence": "\\Comodojo\\Installer\\Persistence\\DatabasePersistence",
+    //         "persistence-source": "src/My/Installer/Persistence/DatabasePersistence.php",
     //         "params": {
     //             "config-file": "config/comodojo-plugins.yml"
     //         }
@@ -49,7 +51,9 @@ class InstallerConfigurationExtraParser {
 
         $this->properties = [
             "driver" => $content['driver'],
-            "persistence" => $content['persistence']
+            "driver-source" => null,
+            "persistence" => $content['persistence'],
+            "persistence-source" => null
         ];
 
         $parameters = isset($content['params']) && is_array($content['params']) ? $content['params'] : [] ;
@@ -64,11 +68,24 @@ class InstallerConfigurationExtraParser {
 
     }
 
+    public function getDriverSource() {
+
+        return $this->properties['driver-source'];
+
+    }
+
     public function getPersistence() {
 
         return $this->properties['persistence'];
 
     }
+
+    public function getPersistenceSource() {
+
+        return $this->properties['persistence-source'];
+
+    }
+
     public function getParams() {
 
         return $this->parameters;

@@ -34,10 +34,22 @@ class InstallerDriverManager {
     ) {
 
         $driver = $extra->getDriver();
-        $persistence = $extra->getPersistence();
-        $parameters = $extra->getParams();
+        $driver_source = $extra->getDriverSource();
 
+        $persistence = $extra->getPersistence();
+        $persistence_source = $extra->getPersistenceSource();
+
+        $parameters = $extra->getParams();
+        $base_path = realpath($composer->getConfig()->get('vendor-dir').'/../');
+
+        if ( !class_exists($persistence) && $persistence_source !== null ) {
+            include $base_path."/$persistence_source";
+        }
         $this->persistence = new $persistence($composer, $io, $configuration, $parameters);
+
+        if ( !class_exists($driver) && $driver_source !== null ) {
+            include $base_path."/$driver_source";
+        }
         $this->driver = new $driver($composer, $io, $configuration, $parameters, $this->persistence);
 
     }
