@@ -56,6 +56,9 @@ class InstallerConfigurationExtraParser {
             "persistence-source" => null
         ];
 
+        if ( !empty($content['driver-source']) ) $this->properties['driver-source'] = $content['driver-source'];
+        if ( !empty($content['persistence-source']) ) $this->properties['persistence-source'] = $content['persistence-source'];
+
         $parameters = isset($content['params']) && is_array($content['params']) ? $content['params'] : [] ;
 
         $this->parameters = new InstallerParameters($parameters);

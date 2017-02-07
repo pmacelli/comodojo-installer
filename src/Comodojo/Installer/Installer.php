@@ -178,7 +178,7 @@ class Installer extends LibraryInstaller {
 
             $repo = $this->drivers[$name];
             $driver = $repo->getDriver();
-            $driver->uninstall($target_package_name, $target_package_path, $config);
+            $driver->install($target_package_name, $target_package_path, $config);
 
         }
 
