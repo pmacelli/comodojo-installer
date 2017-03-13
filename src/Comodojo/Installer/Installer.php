@@ -186,7 +186,7 @@ class Installer extends LibraryInstaller {
 
             $repo = $this->drivers[$name];
             $driver = $repo->getDriver();
-            $driver->update($target_package_name, $target_package_path, $initial_supported_fields[$name], $config);
+            $driver->update($target_package_name, $target_package_path, $initial_supported_fields[$name], $target_supported_fields[$name]);
 
         }
 

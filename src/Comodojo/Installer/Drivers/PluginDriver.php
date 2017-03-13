@@ -98,6 +98,8 @@ class PluginDriver extends AbstractDriver {
 
             case 'install':
 
+                $config[$package_name] = [];
+
                 foreach ($package_extra as $plugin) {
 
                     if ( !self::validate($plugin) ) {
@@ -108,7 +110,7 @@ class PluginDriver extends AbstractDriver {
                         continue;
                     }
 
-                    $config[$package_name] = ArrayOps::replaceStrict($this->base_plugin, $plugin);
+                    $config[$package_name][] = ArrayOps::replaceStrict($this->base_plugin, $plugin);
                     $io->write(" <info>+</info> enabled listener [".$plugin["class"]."] on event ".$plugin["event"]);
 
                 }
