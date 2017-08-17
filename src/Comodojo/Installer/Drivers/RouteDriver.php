@@ -185,7 +185,7 @@ class RouteDriver extends AbstractDriver {
     }
 
     protected static function validate(array $extra) {
-        return !empty($extra["class"]);
+        return !empty($extra["type"]);
     }
 
 }
