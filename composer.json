@@ -26,9 +26,10 @@
     "extra": {
         "class": "Comodojo\\Installer\\Plugin"
     },
+    "minimum-stability": "dev",
     "require": {
         "composer-plugin-api": "^1.0",
-        "comodojo/foundation": "dev-master",
+        "comodojo/foundation": "^1.0",
         "symfony/yaml": "^3.0"
     },
     "require-dev": {
