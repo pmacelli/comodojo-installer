@@ -142,6 +142,7 @@ class TaskDriver extends AbstractDriver {
 
     protected static function buildTask($name, $raw_task, $package_name) {
 
+        $raw_task["name"] = $name;
         $raw_task["package_name"] = $package_name;
 
         return $raw_task;
