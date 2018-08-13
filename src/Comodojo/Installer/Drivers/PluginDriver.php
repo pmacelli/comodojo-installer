@@ -3,6 +3,26 @@
 use \Comodojo\Foundation\Utils\ArrayOps;
 
 /**
+ * Installer driver to process plugins (out-of-framework event listeners)
+ *
+ * This class will parse every "plugins" extra field. It expects the field
+ * syntax to be like the following:
+ *
+ *  "extra": {
+ *      "plugins": [
+ *          {
+ *              "class": "\\My\\Plugin",
+ *              "event": "custom.event",
+ *              "priority": 0, // <= plugin priority if other plugins share same event
+ *              "onetime": true // <= this will make plugin fire only once
+ *          },
+ *          {
+ *              "class": "\\My\\OtherPlugin",
+ *              "event": "custom.anotherevent"
+ *          }
+ *      ]
+ *  }
+ *
  * @package     Comodojo Framework
  * @author      Marco Giovinazzi <marco.giovinazzi@comodojo.org>
  * @license     MIT
@@ -20,23 +40,11 @@ use \Comodojo\Foundation\Utils\ArrayOps;
 
 class PluginDriver extends AbstractDriver {
 
-    // This is an example of how the plugin definition inside the composer.json should be implemented
-    //
-    //  "extra": {
-    //      "plugins": [
-    //          {
-    //              "class": "\\My\\Plugin",
-    //              "event": "custom.event",
-    //              "priority": 0,
-    //              "onetime": false
-    //          },
-    //          {
-    //              "class": "\\My\\OtherPlugin",
-    //              "event": "custom.anotherevent"
-    //          }
-    //      ]
-    //  }
-
+    /**
+     * Basic plugin configuration
+     *
+     * @var array
+     */
     protected $base_plugin = [
         "class" => null,
         "event" => null,
@@ -44,6 +52,9 @@ class PluginDriver extends AbstractDriver {
         "onetime" => false
     ];
 
+    /**
+     * {@inheritDoc}
+     */
     public function install($package_name, $package_path, array $package_extra) {
 
         $io = $this->getIO();
@@ -59,6 +70,9 @@ class PluginDriver extends AbstractDriver {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function update($package_name, $package_path, array $initial_extra, array $target_extra) {
 
         $io = $this->getIO();
@@ -75,6 +89,9 @@ class PluginDriver extends AbstractDriver {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function uninstall($package_name, $package_path, array $package_extra) {
 
         $io = $this->getIO();

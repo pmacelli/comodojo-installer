@@ -21,8 +21,20 @@ use \Composer\IO\IOInterface;
 
 interface PostInstallScriptInterface {
 
+    /**
+     * Post-install constructor,
+     * just to ensure all pieces are in the right place
+     *
+     * @param IOInterface $io
+     * @param Configuration $configuration
+     */
     public function __construct(IOInterface $io, Configuration $configuration);
 
+    /**
+     * Exec some kind of post-install script
+     *
+     * @return void
+     */
     public function run();
 
 }

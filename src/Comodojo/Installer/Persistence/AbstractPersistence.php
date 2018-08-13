@@ -24,14 +24,29 @@ use \Composer\IO\IOInterface;
 
 abstract class AbstractPersistence implements InstallerPersistenceInterface {
 
+    /**
+     * @var Composer
+     */
     protected $composer;
 
+    /**
+     * @var IOInterface
+     */
     protected $io;
 
+    /**
+     * @var Configuration
+     */
     protected $configuration;
 
+    /**
+     * @var InstallerParameters
+     */
     protected $parameters;
 
+    /**
+     * {@inheritDoc}
+     */
     public function __construct(Composer $composer, IOInterface $io, Configuration $configuration, InstallerParameters $parameters) {
 
         $this->composer = $composer;
@@ -74,8 +89,14 @@ abstract class AbstractPersistence implements InstallerPersistenceInterface {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     abstract public function load();
 
+    /**
+     * {@inheritDoc}
+     */
     abstract public function dump(array $data);
 
 }

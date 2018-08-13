@@ -23,10 +23,31 @@ use \Composer\IO\IOInterface;
 
 interface InstallerPersistenceInterface {
 
+    /**
+     * Persistence constructor,
+     * just to ensure all pieces are in the right place
+     *
+     * @param Composer $composer
+     * @param IOInterface $io
+     * @param Configuration $configuration
+     * @param InstallerParameters $parameters
+     */
     public function __construct(Composer $composer, IOInterface $io, Configuration $configuration, InstallerParameters $parameters);
 
+    /**
+     * Load persistent definition (if available)
+     *
+     * @return array
+     */
     public function load();
 
+    /**
+     * Makes configuration persitent.
+     *
+     * @param array $data
+     *
+     * @return void
+     */
     public function dump(array $data);
 
 }

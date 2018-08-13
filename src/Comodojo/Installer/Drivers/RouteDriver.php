@@ -3,6 +3,33 @@
 use \Comodojo\Foundation\Utils\ArrayOps;
 
 /**
+ * Installer driver to process http routes
+ *
+ * This class will parse every "routes" extra field. It expects the field
+ * syntax to be like the following:
+ *
+ *  "extra": {
+ *      "routes": {
+ *          "test": {
+ *              "query": [
+ *                  {
+ *                      "page": "p(\\d+)"
+ *                  },
+ *                  {
+ *                      "ux_timestamp*": "\\d{10}",
+ *                      "microseconds": "\\d{4}"
+ *                  }
+ *              ],
+ *              "type": "ROUTE",
+ *              "class": "\\Comodojo\\Dispatcher\\Service\\Test"
+ *              "parameters": {
+ *                  "cache": "SERVER",
+ *                  "ttl": 3
+ *              }
+ *          }
+ *      }
+ *  }
+ *
  * @package     Comodojo Framework
  * @author      Marco Giovinazzi <marco.giovinazzi@comodojo.org>
  * @license     MIT
@@ -20,30 +47,6 @@ use \Comodojo\Foundation\Utils\ArrayOps;
 
 class RouteDriver extends AbstractDriver {
 
-    // This is an example of how the route definition inside the composer.json should be implemented
-    //
-    //  "extra": {
-    //      "routes": {
-    //          "test": {
-    //              "query": [
-    //                  {
-    //                      "page": "p(\\d+)"
-    //                  },
-    //                  {
-    //                      "ux_timestamp*": "\\d{10}",
-    //                      "microseconds": "\\d{4}"
-    //                  }
-    //              ],
-    //              "type": "ROUTE",
-    //              "class": "\\Comodojo\\Dispatcher\\Service\\Test"
-    //              "parameters": {
-    //                  "cache": "SERVER",
-    //                  "ttl": 3
-    //              }
-    //          }
-    //      }
-    //  }
-
     protected $base_route = [
         "query" => [],
         "type" => 'ROUTE',
@@ -52,6 +55,9 @@ class RouteDriver extends AbstractDriver {
         "package_name" => null
     ];
 
+    /**
+     * {@inheritDoc}
+     */
     public function install($package_name, $package_path, array $package_extra) {
 
         $io = $this->getIO();
@@ -67,6 +73,9 @@ class RouteDriver extends AbstractDriver {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function update($package_name, $package_path, array $initial_extra, array $target_extra) {
 
         $io = $this->getIO();
@@ -83,6 +92,9 @@ class RouteDriver extends AbstractDriver {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function uninstall($package_name, $package_path, array $package_extra) {
 
         $io = $this->getIO();

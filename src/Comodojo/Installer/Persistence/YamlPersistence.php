@@ -4,6 +4,8 @@ use \Symfony\Component\Yaml\Yaml;
 use \Comodojo\Exception\InstallerException;
 
 /**
+ * Dump configuration statements to a yaml file
+ *
  * @package     Comodojo Framework
  * @author      Marco Giovinazzi <marco.giovinazzi@comodojo.org>
  * @license     MIT
@@ -21,8 +23,18 @@ use \Comodojo\Exception\InstallerException;
 
 class YamlPersistence extends AbstractPersistence {
 
+    /**
+     * Default depth of yaml file
+     *
+     * This will be the default if no "depth" parameter is specified
+     *
+     * @const int
+     */
     const DEFAULT_DEPTH = 4;
 
+    /**
+     * {@inheritDoc}
+     */
     public function load() {
 
         $name = $this->getParameters()->get('config-file');
@@ -35,6 +47,9 @@ class YamlPersistence extends AbstractPersistence {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function dump(array $data) {
 
         $name = $this->getParameters()->get('config-file');

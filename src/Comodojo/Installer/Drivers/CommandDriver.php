@@ -3,6 +3,31 @@
 use \Comodojo\Foundation\Utils\ArrayOps;
 
 /**
+ * Installer driver to process command line commands
+ *
+ * This class will parse every "commands" extra field. It expects the field
+ * syntax to be like the following:
+ *
+ *  "extra": {
+ *      "commands": [
+ *          {
+ *              "class": "\\My\\Command",
+ *              "scope": "dispatcher" // <= this command will be loaded by dispatcher exec only
+ *          },
+ *          {
+ *              "class": "\\My\\Command",
+ *              "scope": "extender" // <= this command will be loaded by extender exec only
+ *          },
+ *          {
+ *              "class": "\\My\\Command" // <= this command will be loaded by every exec
+ *          },
+ *          {
+ *              "class": "\\My\\Command",
+ *              "scope": "any" // <= this command will be loaded by every exec
+ *          }
+ *      ]
+ *  }
+ *
  * @package     Comodojo Framework
  * @author      Marco Giovinazzi <marco.giovinazzi@comodojo.org>
  * @license     MIT
@@ -20,33 +45,19 @@ use \Comodojo\Foundation\Utils\ArrayOps;
 
 class CommandDriver extends AbstractDriver {
 
-    // This is an example of how the command definition inside the composer.json should be implemented
-    //
-    //  "extra": {
-    //      "commands": [
-    //          {
-    //              "class": "\\My\\Command",
-    //              "scope": "dispatcher" // <= this command will be loaded by dispatcher exec only
-    //          },
-    //          {
-    //              "class": "\\My\\Command",
-    //              "scope": "extender" // <= this command will be loaded by extender exec only
-    //          },
-    //          {
-    //              "class": "\\My\\Command" // <= this command will be loaded by every exec
-    //          },
-    //          {
-    //              "class": "\\My\\Command",
-    //              "scope": "any" // <= this command will be loaded by every exec
-    //          }
-    //      ]
-    //  }
-
+    /**
+     * Basic command configuration
+     *
+     * @var array
+     */
     protected $base_cmd = [
         "class" => null,
         "scope" => 'any'
     ];
 
+    /**
+     * {@inheritDoc}
+     */
     public function install($package_name, $package_path, array $package_extra) {
 
         $io = $this->getIO();
@@ -62,6 +73,9 @@ class CommandDriver extends AbstractDriver {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function update($package_name, $package_path, array $initial_extra, array $target_extra) {
 
         $io = $this->getIO();
@@ -78,6 +92,9 @@ class CommandDriver extends AbstractDriver {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function uninstall($package_name, $package_path, array $package_extra) {
 
         $io = $this->getIO();

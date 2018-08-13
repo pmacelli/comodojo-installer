@@ -24,12 +24,56 @@ use \Comodojo\Installer\Interfaces\InstallerPersistenceInterface;
 
 interface InstallerDriverInterface {
 
-    public function __construct(Composer $composer, IOInterface $io, Configuration $configuration, InstallerParameters $parameters, InstallerPersistenceInterface $persistence);
+    /**
+     * Driver constructor,
+     * just to ensure all pieces are in the right place
+     *
+     * @param Composer $composer
+     * @param IOInterface $io
+     * @param Configuration $configuration
+     * @param InstallerParameters $parameters
+     * @param InstallerPersistenceInterface $persistence
+     */
+    public function __construct(
+        Composer $composer,
+        IOInterface $io,
+        Configuration $configuration,
+        InstallerParameters $parameters,
+        InstallerPersistenceInterface $persistence
+    );
 
+    /**
+     * Install a package, processing all extra fields that it contains.
+     *
+     * @param string $package_name
+     * @param string $package_path
+     * @param array $package_extra
+     *
+     * @return void
+     */
     public function install($package_name, $package_path, array $package_extra);
 
+    /**
+     * Update a package checking differences from it's initial and target extra fields.
+     *
+     * @param string $package_name
+     * @param string $package_path
+     * @param array $initial_extra
+     * @param array $target_extra
+     *
+     * @return void
+     */
     public function update($package_name, $package_path, array $initial_extra, array $target_extra);
 
+    /**
+     * Uninstall package, removing all related extra fields.
+     *
+     * @param string $package_name
+     * @param string $package_path
+     * @param array $package_extra
+     *
+     * @return void
+     */
     public function uninstall($package_name, $package_path, array $package_extra);
 
 }

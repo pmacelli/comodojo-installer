@@ -25,17 +25,41 @@ use \Comodojo\Installer\Interfaces\InstallerPersistenceInterface;
 
 abstract class AbstractDriver implements InstallerDriverInterface {
 
+    /**
+     * @var Composer
+     */
     protected $composer;
 
+    /**
+     * @var IOInterface
+     */
     protected $io;
 
+    /**
+     * @var Configuration
+     */
     protected $configuration;
 
+    /**
+     * @var InstallerParameters
+     */
     protected $parameters;
 
+    /**
+     * @var InstallerPersistenceInterface
+     */
     protected $persistence;
 
-    public function __construct(Composer $composer, IOInterface $io, Configuration $configuration, InstallerParameters $parameters, InstallerPersistenceInterface $persistence) {
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(
+        Composer $composer,
+        IOInterface $io,
+        Configuration $configuration,
+        InstallerParameters $parameters,
+        InstallerPersistenceInterface $persistence
+    ) {
 
         $this->composer = $composer;
         $this->io = $io;
@@ -45,40 +69,64 @@ abstract class AbstractDriver implements InstallerDriverInterface {
 
     }
 
+    /**
+     * @return Composer
+     */
     public function getComposer() {
 
         return $this->composer;
 
     }
 
+    /**
+     * @return IOInterface
+     */
     public function getIo() {
 
         return $this->io;
 
     }
 
+    /**
+     * @return Configuration
+     */
     public function getConfiguration() {
 
         return $this->configuration;
 
     }
 
+    /**
+     * @return InstallerParameters
+     */
     public function getParameters() {
 
         return $this->parameters;
 
     }
 
+    /**
+     * @return InstallerPersistenceInterface
+     */
     public function getPersistence() {
 
         return $this->persistence;
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     abstract public function install($package_name, $package_path, array $package_extra);
 
+    /**
+     * {@inheritDoc}
+     */
     abstract public function update($package_name, $package_path, array $initial_extra, array $target_extra);
 
+    /**
+     * {@inheritDoc}
+     */
     abstract public function uninstall($package_name, $package_path, array $package_extra);
 
 }

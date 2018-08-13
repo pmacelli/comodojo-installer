@@ -3,6 +3,8 @@
 use \Comodojo\Exception\InstallerException;
 
 /**
+ * Dump configuration statements to a json file
+ *
  * @package     Comodojo Framework
  * @author      Marco Giovinazzi <marco.giovinazzi@comodojo.org>
  * @license     MIT
@@ -20,6 +22,9 @@ use \Comodojo\Exception\InstallerException;
 
 class JsonPersistence extends AbstractPersistence {
 
+    /**
+     * {@inheritDoc}
+     */
     public function load() {
 
         $name = $this->getParameters()->get('config-file');
@@ -32,6 +37,9 @@ class JsonPersistence extends AbstractPersistence {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function dump(array $data) {
 
         $name = $this->getParameters()->get('config-file');

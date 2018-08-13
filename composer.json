@@ -2,7 +2,7 @@
     "name": "comodojo/comodojo-installer",
     "type": "composer-plugin",
     "license": "MIT",
-    "description": "A modular installer for the Comodojo Project",
+    "description": "Modular installer for the Comodojo Project",
     "keywords": [
         "comodojo",
         "installer"
@@ -27,6 +27,7 @@
         "class": "Comodojo\\Installer\\Plugin"
     },
     "require": {
+        "php": ">=5.6.0",
         "composer-plugin-api": "^1.0",
         "comodojo/foundation": "dev-master",
         "symfony/yaml": "^3.0"
