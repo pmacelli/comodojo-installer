@@ -8,7 +8,8 @@ Modular installer for the Comodojo Project.
 
 ## Requirements
 
-- php >=5.6.0
+- php >= 5.6.0
+- composer-plugin-api > 1.0
 
 ## Installation
 
@@ -18,7 +19,7 @@ Install [composer](https://getcomposer.org/), then:
 
 ## Documentation
 
-- Docs (wip): [docs.comodojo.org](https://docs.comodojo.org/en/latest/)
+- Docs (wip): [docs.comodojo.org](https://docs.comodojo.org/projects/comodojo-installer/en/latest/)
 - API: [api.comodojo.org/libs/comodojo-installer](https://api.comodojo.org/libs/comodojo-installer/)
 
 ## Contributing
