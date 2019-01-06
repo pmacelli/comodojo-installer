@@ -1,12 +1,12 @@
 Installation
 ============
 
-.. _dispatcher: https://github.com/comodojo/dispatcher
-.. _extender: https://github.com/comodojo/extender
+.. _comodojo/dispatcher: https://github.com/comodojo/dispatcher
+.. _comodojo/extender: https://github.com/comodojo/extender
 
-.. note: This library is a default dependency of `dispatcher`_ and `extender`_ project packages.
+.. note: This library is a default dependency of `comodojo/dispatcher`_ and `comodojo/extender`_ project packages.
 
-To add it in personal projects, the first step is to add a specific requirement in the composer.json of the project package:
+As a composer plugin, this library must be included as a direct dependency in a root (project) package.
 
 .. code:: javascript
 
@@ -16,7 +16,9 @@ To add it in personal projects, the first step is to add a specific requirement 
         "comodojo/comodojo-installer" : "^1.0"
     }
 
-The same file should include a specific configuration section in the *extra* field like:
+Once installed, the plugin is immediately active and starts to scan the composer.json file looking for a custom configuration (in the *extra* section).
+
+Following an example configuration in the composer.json.
 
 .. code:: javascript
 
@@ -45,9 +47,12 @@ The same file should include a specific configuration section in the *extra* fie
         }
     }
 
-More details about configuration statements are availble in :ref:`general-configuration`.
+.. seealso:: More details in :ref:`general-configuration`.
 
 Requirements
 ************
 
-To work properly, comodojo/comodojo-installer requires PHP >=5.6.0 and composer-plugin-api > 1.0
+To work properly, comodojo/comodojo-installer requires:
+
+- PHP >= 5.6.0
+- composer-plugin-api > 1.0
