@@ -32,6 +32,11 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
     protected $comodojo_configuration;
 
     protected $comodojo_configuration_persistence;
+    
+    public function deactivate(Composer $composer, IOInterface $io){}
+    
+    public function uninstall(Composer $composer, IOInterface $io){}
+    
 
     public function activate(Composer $composer, IOInterface $io) {
 
@@ -53,8 +58,6 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
         $composer->getInstallationManager()->addInstaller($installer);
 
     }
-    abstract public function deactivate(Composer $composer, IOInterface $io);
-    
     public function uninstall(Composer $composer, IOInterface $io);
     
     public static function getSubscribedEvents() {
