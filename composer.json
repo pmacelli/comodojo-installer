@@ -1,5 +1,5 @@
 {
-    "name": "comodojo/comodojo-installer",
+    "name": "pmarcelli/comodojo-installer",
     "type": "composer-plugin",
     "license": "MIT",
     "description": "Modular installer for the Comodojo Project",
