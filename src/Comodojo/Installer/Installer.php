@@ -72,7 +72,7 @@ class Installer extends LibraryInstaller {
 
         $promise = parent::install($repo, $package);
 
-        $promise->then(function(){
+        $promise->done(function() use $package{
             $this->packageInstall($package);
         });
 
