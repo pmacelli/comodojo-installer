@@ -104,9 +104,12 @@ class Installer extends LibraryInstaller {
      */
     public function uninstall(InstalledRepositoryInterface $repo, PackageInterface $package) {
 
-        $this->packageUninstall($package);
+        $this->io->write("UNINSTALL");
 
-        parent::uninstall($repo, $package);
+        $promise = parent::uninstall($repo, $package);
+        if ($promise instanceof PromiseInterface) {
+            $this->packageUninstall($package);
+        }
 
     }
 
