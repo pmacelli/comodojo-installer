@@ -81,7 +81,7 @@ class Installer extends LibraryInstaller {
             
             
             //$promise->done(function() use($package){
-            
+                sleep(5);
                 $this->packageInstall($package);
             //    $this->io->write("DONE");
             
