@@ -74,19 +74,18 @@ class Installer extends LibraryInstaller {
      */
     public function install(InstalledRepositoryInterface $repo, PackageInterface $package) {
 
-          $promise = parent::install($repo, $package);
-        $this->io->write("INSTALL: " . \get_called_class());
+            $promise = parent::install($repo, $package);
         $this->io->write("INSTALL: " . get_class($promise));
         
         if ($promise instanceof PromiseInterface) {
             
             
-            $promise->done(function() use($package){
+            //$promise->done(function() use($package){
             
                 $this->packageInstall($package);
-                $this->io->write("DONE");
+            //    $this->io->write("DONE");
             
-            });
+            //});
     
 
         }
