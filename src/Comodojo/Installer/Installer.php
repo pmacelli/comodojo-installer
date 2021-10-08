@@ -76,7 +76,7 @@ class Installer extends LibraryInstaller {
 
         $promise = parent::install($repo, $package);
         
-        $this->io->write("PROMISE: " . get_class($promise));
+        $this->io->write("PROMISE: " . implode("-", get_object_vars($promise)));
         
         $promise->promise()->done(function() use ($package){
             $this->packageInstall($package);
