@@ -10,7 +10,7 @@ use \Comodojo\Foundation\Base\Configuration;
 use \Comodojo\Exception\InstallerException;
 use \Comodojo\Installer\Components\InstallerDriverManager;
 use \Comodojo\Foundation\Utils\ArrayOps;
-use React\Promise\FulfilledPromise;
+use React\Promise\PromiseInterface;
 
 /**
  * @package     Comodojo Framework
