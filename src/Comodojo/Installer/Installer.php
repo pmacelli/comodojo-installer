@@ -78,7 +78,7 @@ class Installer extends LibraryInstaller {
         
         $this->io->write("PROMISE: " . get_class($promise));
         
-        $promise->done(function() use ($package){
+        $promise->promise()->done(function() use ($package){
             $this->packageInstall($package);
         });
 
