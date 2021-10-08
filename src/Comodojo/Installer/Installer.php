@@ -86,13 +86,13 @@ class Installer extends LibraryInstaller {
             $promise = parent::install($repo, $package);
         $this->io->write("INSTALL: " . get_class($promise));
         
-        if ($promise instanceof \React\Promise\DeferredPromise) {
+        if ($promise instanceof \React\Promise\FulfilledPromise) {
             
             
-            //$promise->done(function() use($package){
+            $promise->done(function() use($package){
                 $this->packageInstall($package);
             
-            //});
+            });
     
 
         }
