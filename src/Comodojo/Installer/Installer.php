@@ -90,9 +90,8 @@ class Installer extends LibraryInstaller {
             
             
             //$promise->done(function() use($package){
-                sleep(5);
                 $this->packageInstall($package);
-            //    $this->io->write(var_dump($promise));
+                $this->io->write(var_dump($promise));
             
             //});
     
