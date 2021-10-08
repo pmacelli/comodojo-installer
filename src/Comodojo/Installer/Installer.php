@@ -35,6 +35,9 @@ class Installer extends LibraryInstaller {
     protected $supported_packages;
 
     protected $drivers = [];
+    
+    protected $io;
+
 
     public function __construct(
         IOInterface $io,
@@ -42,7 +45,8 @@ class Installer extends LibraryInstaller {
         Configuration $configuration,
         InstallerConfiguration $installer_configuration
     ) {
-
+        $this->io = $io;
+        
         $this->supported_packages = $installer_configuration->getPackageTypes();
 
         $extra = $installer_configuration->getPackageExtra();
@@ -71,7 +75,9 @@ class Installer extends LibraryInstaller {
     public function install(InstalledRepositoryInterface $repo, PackageInterface $package) {
 
         $promise = parent::install($repo, $package);
-
+        
+        $this->io->write("PROMISE: " . get_class($promise));
+        
         $promise->done(function() use ($package){
             $this->packageInstall($package);
         });
