@@ -76,12 +76,17 @@ class Installer extends LibraryInstaller {
 
           $promise = parent::install($repo, $package);
         
-        $this->io->write("PROMISE: " . get_class($promise));
+        $this->io->write("INSTALL: " . get_class($promise));
         
         if ($promise instanceof PromiseInterface) {
             
-            $this->packageInstall($package);
-            $this->io->write("DONE");
+            
+            $promise->done(function() use($package){
+            
+                $this->packageInstall($package);
+                $this->io->write("DONE");
+            
+            });
     
 
         }
@@ -103,13 +108,9 @@ class Installer extends LibraryInstaller {
      * {@inheritDoc}
      */
     public function uninstall(InstalledRepositoryInterface $repo, PackageInterface $package) {
-
-        $this->io->write("UNINSTALL");
+            $this->packageUninstall($package);
 
         $promise = parent::uninstall($repo, $package);
-        if ($promise instanceof PromiseInterface) {
-            $this->packageUninstall($package);
-        }
 
     }
 
