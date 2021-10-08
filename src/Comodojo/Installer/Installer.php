@@ -10,6 +10,7 @@ use \Comodojo\Foundation\Base\Configuration;
 use \Comodojo\Exception\InstallerException;
 use \Comodojo\Installer\Components\InstallerDriverManager;
 use \Comodojo\Foundation\Utils\ArrayOps;
+use React\Promise\PromiseInterface;
 
 /**
  * @package     Comodojo Framework
@@ -69,9 +70,11 @@ class Installer extends LibraryInstaller {
      */
     public function install(InstalledRepositoryInterface $repo, PackageInterface $package) {
 
-        parent::install($repo, $package);
+        $promise = parent::install($repo, $package);
 
-        $this->packageInstall($package);
+        $promise->done(function(){
+            $this->packageInstall($package);
+        });
 
     }
 
