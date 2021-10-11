@@ -35,9 +35,6 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 
     protected $comodojo_configuration_persistence;
     
-    protected $_composer;
-    protected $_io;
-
     public function deactivate(Composer $composer, IOInterface $io){}
     
     public function uninstall(Composer $composer, IOInterface $io){}
@@ -45,9 +42,6 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
     public function activate(Composer $composer, IOInterface $io) {
 
         // First, get current extra field and init a valid installer configuration
-        $this->_composer = $composer;
-        $this->_io = $io;
-        
         $extra = $composer->getPackage()->getExtra();
         $parameters = isset($extra['comodojo-installer']) && is_array($extra['comodojo-installer']) ? $extra['comodojo-installer'] : [];
         $this->installer_configuration = new InstallerConfiguration($parameters);
@@ -61,36 +55,18 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
         $this->comodojo_configuration = $this->loadComodojoConfiguration($io, $extra);
 
         // Finally, plug the installer!
-        //$installer = new Installer($io, $composer, $this->comodojo_configuration, $this->installer_configuration);
-        //$composer->getInstallationManager()->addInstaller($installer);
+        sleep(5);
+        $installer = new Installer($io, $composer, $this->comodojo_configuration, $this->installer_configuration);
+        $composer->getInstallationManager()->addInstaller($installer);
 
     }
 
     public static function getSubscribedEvents() {
-        /*
         return [
             'post-create-project-cmd' => 'startPostInstallScript',
-            'post-file-download' => [['startInstaller',0]]
         ];
-        */
-       return array(
-            PluginEvents::POST_FILE_DOWNLOAD => array(
-                array('startInstaller', 0)
-            ),
-        );        
-
     }
 
-    public function startInstaller(PostFileDownloadEvent $event) {
-
-        // Finally, plug the installer!
-        $this->_io->write("START-INSTALLER");
-        $installer = new Installer($this->_io, $this->_composer, $this->comodojo_configuration, $this->installer_configuration);
-        $this->_composer->getInstallationManager()->addInstaller($installer);
-
-
-    }
-    
     
     public function startPostInstallScript(Event $event) {
 
