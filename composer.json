@@ -24,7 +24,8 @@
          }
     },
     "extra": {
-        "class": "Comodojo\\Installer\\Plugin"
+        "class": "Comodojo\\Installer\\Plugin",
+        "plugin-modifies-downloads": true
     },
     "require": {
         "php": ">=5.6.0",
