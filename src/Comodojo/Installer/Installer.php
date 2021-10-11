@@ -106,7 +106,7 @@ class Installer extends LibraryInstaller {
 
         $promise = parent::update($repo, $initial, $target);
 
-        $this->io->write("UPDATE: " . get_class($promise));
+        $this->io->write("UPDATE-test: " . get_class($promise));
 
     }
 
