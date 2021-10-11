@@ -53,17 +53,31 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
         $this->comodojo_configuration = $this->loadComodojoConfiguration($io, $extra);
 
         // Finally, plug the installer!
-        $installer = new Installer($io, $composer, $this->comodojo_configuration, $this->installer_configuration);
-        $composer->getInstallationManager()->addInstaller($installer);
+        //$installer = new Installer($io, $composer, $this->comodojo_configuration, $this->installer_configuration);
+        //$composer->getInstallationManager()->addInstaller($installer);
 
     }
 
     public static function getSubscribedEvents() {
 
-        return ['post-create-project-cmd' => 'startPostInstallScript'];
+        return [
+            'post-create-project-cmd' => 'startPostInstallScript',
+            'post-install-cmd' => 'startInstaller',
+            'post-update-cmd' => 'startInstaller'
+        ];
 
     }
 
+    public function startInstaller($io, $composer) {
+
+        // Finally, plug the installer!
+        $installer = new Installer($io, $composer, $this->comodojo_configuration, $this->installer_configuration);
+        $composer->getInstallationManager()->addInstaller($installer);
+
+
+    }
+    
+    
     public function startPostInstallScript(Event $event) {
 
         $script = $this->installer_configuration->getPostInstallScript();
