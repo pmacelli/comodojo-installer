@@ -3,8 +3,6 @@
 use \Composer\Composer;
 use \Composer\IO\IOInterface;
 use \Composer\Plugin\PluginInterface;
-use Composer\Plugin\PluginEvents;
-use Composer\Plugin\PostFileDownloadEvent;
 use \Composer\EventDispatcher\EventSubscriberInterface;
 use \Composer\EventDispatcher\Event;
 use \Comodojo\Installer\Components\InstallerConfiguration;
@@ -35,9 +33,19 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 
     protected $comodojo_configuration_persistence;
     
-    public function deactivate(Composer $composer, IOInterface $io){}
+    /**
+    * {@inheritDoc}
+    */
+    public function deactivate(Composer $composer, IOInterface $io){
     
-    public function uninstall(Composer $composer, IOInterface $io){}
+    }
+    
+    /**
+    * {@inheritDoc}
+    */
+    public function uninstall(Composer $composer, IOInterface $io){
+    
+    }
     
     public function activate(Composer $composer, IOInterface $io) {
 
@@ -61,9 +69,9 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
     }
 
     public static function getSubscribedEvents() {
-        return [
-            'post-create-project-cmd' => 'startPostInstallScript',
-        ];
+
+        return ['post-create-project-cmd' => 'startPostInstallScript'];        
+    
     }
 
     
