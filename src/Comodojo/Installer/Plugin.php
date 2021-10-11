@@ -56,8 +56,8 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 
         // Finally, plug the installer!
         sleep(5);
-        $installer = new Installer($io, $composer, $this->comodojo_configuration, $this->installer_configuration);
-        $composer->getInstallationManager()->addInstaller($installer);
+        $this->installer = new Installer($io, $composer, $this->comodojo_configuration, $this->installer_configuration);
+        $composer->getInstallationManager()->addInstaller($this->installer);
 
     }
 
