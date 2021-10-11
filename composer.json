@@ -1,5 +1,5 @@
 {
-    "name": "pmarcelli/comodojo-installer",
+    "name": "comodojo/comodojo-installer",
     "type": "composer-plugin",
     "license": "MIT",
     "description": "Modular installer for the Comodojo Project",
@@ -28,12 +28,12 @@
     },
     "require": {
         "php": ">=5.6.0",
-        "composer-plugin-api": "^2.1",
+        "composer-plugin-api": "^1.0",
         "comodojo/foundation": "dev-master",
         "symfony/yaml": "^3.0"
     },
     "require-dev": {
-        "composer/composer": "^2.1",
+        "composer/composer": "^1.0",
         "phpunit/phpunit": "^4.0|^5.0",
         "scrutinizer/ocular": "^1.0"
     }
