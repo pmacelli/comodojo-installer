@@ -3,6 +3,7 @@
 use \Composer\Composer;
 use \Composer\IO\IOInterface;
 use \Composer\Plugin\PluginInterface;
+use Composer\Plugin\PluginEvents;
 use Composer\Plugin\PostFileDownloadEvent;
 use \Composer\EventDispatcher\EventSubscriberInterface;
 use \Composer\EventDispatcher\Event;
@@ -66,11 +67,17 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
     }
 
     public static function getSubscribedEvents() {
-
+        /*
         return [
             'post-create-project-cmd' => 'startPostInstallScript',
             'post-file-download' => [['startInstaller',0]]
         ];
+        */
+       return array(
+            PluginEvents::POST_FILE_DOWNLOAD => array(
+                array('startInstaller', 0)
+            ),
+        );        
 
     }
 
