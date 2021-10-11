@@ -69,32 +69,33 @@ class Installer extends LibraryInstaller {
 
     }
 
-        public function download(PackageInterface $package, PackageInterface $prevPackage = null)
-    {
-        
-        $promise = parent::download($package, $prevPackage);
-            
-    }
-
+ 
     
     /**
      * {@inheritDoc}
      */
     public function install(InstalledRepositoryInterface $repo, PackageInterface $package) {
-
-            $promise = parent::install($repo, $package);
+        $addPlugin = function() use ($repo, $package) {
+            // Add the plugin info to plugins.php
+            $this->packageInstall($package);
+        };
+        
+        $promise = parent::install($repo, $package);
         $this->io->write("INSTALL: " . get_class($promise));
         
-        //if ($promise instanceof \React\Promise\FulfilledPromise) {
+        if ($promise instanceof PromiseInterface) {
             
-            
+            return $promise->then($addPlugin);
           //  $promise->done(function() use($package){
-                $this->packageInstall($package);
+                //$this->packageInstall($package);
             
            // });
     
 
-        //}
+        }
+
+        $addPlugin();
+        return null;
 
     }
 
@@ -103,9 +104,9 @@ class Installer extends LibraryInstaller {
      */
     public function update(InstalledRepositoryInterface $repo, PackageInterface $initial, PackageInterface $target) {
 
-        parent::update($repo, $initial, $target);
+        $promise = parent::update($repo, $initial, $target);
 
-        $this->packageUpdate($initial, $target);
+        $this->io->write("UPDATE: " . get_class($promise));
 
     }
 
