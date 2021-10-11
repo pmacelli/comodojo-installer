@@ -72,10 +72,8 @@ class Installer extends LibraryInstaller {
         public function download(PackageInterface $package, PackageInterface $prevPackage = null)
     {
         
-
         $promise = parent::download($package, $prevPackage);
-        sleep(5);
-        $this->io->write("DOWLOAD" . get_class($promise));
+            
     }
 
     
