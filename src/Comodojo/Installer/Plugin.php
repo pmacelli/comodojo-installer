@@ -3,6 +3,7 @@
 use \Composer\Composer;
 use \Composer\IO\IOInterface;
 use \Composer\Plugin\PluginInterface;
+use Composer\Plugin\PostFileDownloadEvent;
 use \Composer\EventDispatcher\EventSubscriberInterface;
 use \Composer\EventDispatcher\Event;
 use \Comodojo\Installer\Components\InstallerConfiguration;
@@ -34,6 +35,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
     protected $comodojo_configuration_persistence;
     
     protected $_composer;
+    protected $_io;
 
     public function deactivate(Composer $composer, IOInterface $io){}
     
@@ -43,6 +45,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 
         // First, get current extra field and init a valid installer configuration
         $this->_composer = $composer;
+        $this->_io = $io;
         
         $extra = $composer->getPackage()->getExtra();
         $parameters = isset($extra['comodojo-installer']) && is_array($extra['comodojo-installer']) ? $extra['comodojo-installer'] : [];
@@ -71,12 +74,11 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 
     }
 
-    public function startInstaller(Event $event) {
+    public function startInstaller(PostFileDownloadEvent $event) {
 
         // Finally, plug the installer!
-        $io = $event->getIO();
-        $io->write("START-INSTALLER");
-        $installer = new Installer($io, $this->_composer, $this->comodojo_configuration, $this->installer_configuration);
+        $this->_io->write("START-INSTALLER");
+        $installer = new Installer($this->_io, $this->_composer, $this->comodojo_configuration, $this->installer_configuration);
         $this->_composer->getInstallationManager()->addInstaller($installer);
 
 
