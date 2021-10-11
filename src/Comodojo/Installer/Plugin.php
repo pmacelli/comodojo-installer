@@ -66,8 +66,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 
         return [
             'post-create-project-cmd' => 'startPostInstallScript',
-            'post-install-cmd' => 'startInstaller',
-            'post-update-cmd' => 'startInstaller'
+            'post-file-download' => 'startInstaller'
         ];
 
     }
