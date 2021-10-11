@@ -36,16 +36,12 @@ class Installer extends LibraryInstaller {
 
     protected $drivers = [];
     
-    protected $io;
-
-
     public function __construct(
         IOInterface $io,
         Composer $composer,
         Configuration $configuration,
         InstallerConfiguration $installer_configuration
     ) {
-        $this->io = $io;
         
         $this->supported_packages = $installer_configuration->getPackageTypes();
 
@@ -68,33 +64,29 @@ class Installer extends LibraryInstaller {
         return in_array($packageType, $this->supported_packages);
 
     }
-
- 
     
     /**
      * {@inheritDoc}
      */
     public function install(InstalledRepositoryInterface $repo, PackageInterface $package) {
-        $addPlugin = function() use ($repo, $package) {
-            // Add the plugin info to plugins.php
+        
+        $installPackage = function() use ($package) {
+
             $this->packageInstall($package);
+        
         };
         
+        // Composer v2 return a promise
         $promise = parent::install($repo, $package);
-        $this->io->write("INSTALL: " . get_class($promise));
-        
+
         if ($promise instanceof PromiseInterface) {
             
-            return $promise->then($addPlugin);
-          //  $promise->done(function() use($package){
-                //$this->packageInstall($package);
-            
-           // });
-    
+            return $promise->then($installPackage);
 
         }
 
-        $addPlugin();
+        $installPackage();
+
         return null;
 
     }
@@ -104,20 +96,51 @@ class Installer extends LibraryInstaller {
      */
     public function update(InstalledRepositoryInterface $repo, PackageInterface $initial, PackageInterface $target) {
 
+        $updatePackage = function() use ($initial, $target) {
+
+            $this->packageUpdate($initial, $target);
+        
+        };
+        
+        // Composer v2 return a promise
         $promise = parent::update($repo, $initial, $target);
 
-        $this->io->write("UPDATE-test: " . get_class($promise));
+        if ($promise instanceof PromiseInterface) {
+            
+            return $promise->then($updatePackage);
 
+        }
+
+        $updatePackage();
+
+        return null;
+        
     }
 
     /**
      * {@inheritDoc}
      */
     public function uninstall(InstalledRepositoryInterface $repo, PackageInterface $package) {
-            $this->packageUninstall($package);
 
+        $uninstallPackage = function() use ($package) {
+
+            $this->packageUninstall($package);
+        
+        };
+        
+        // Composer v2 return a promise
         $promise = parent::uninstall($repo, $package);
 
+        if ($promise instanceof PromiseInterface) {
+            
+            return $promise->then($uninstallPackage);
+
+        }
+
+        $uninstallPackage();
+
+        return null;        
+        
     }
 
     private function packageInstall($package) {
