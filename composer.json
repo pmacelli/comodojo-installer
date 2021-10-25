@@ -27,7 +27,7 @@
         "class": "Comodojo\\Installer\\Plugin"
     },
     "require": {
-        "php": ">=5.6.0",
+        "php": ">=^7.3",
         "composer-plugin-api": "^2.0",
         "pmarcelli/foundation": "dev-foundation_u7320",
         "symfony/yaml": "^5.0"
