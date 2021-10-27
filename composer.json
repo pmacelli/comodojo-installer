@@ -30,7 +30,7 @@
         "php": "^7.3",
         "composer-plugin-api": "^2.0",
         "pmarcelli/foundation": "dev-foundation_u7320",
-        "symfony/yaml": "^5.0"
+        "symfony/yaml": ">=5.0 <=5.3"
     },
     "require-dev": {
         "composer/composer": "^2.0",
