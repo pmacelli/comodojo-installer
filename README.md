@@ -8,8 +8,8 @@ Modular installer for the Comodojo Project.
 
 ## Requirements
 
-- php >= 7.3
-- composer-plugin-api >= 2.0
+- php >= 5.6.0
+- composer-plugin-api > 1.0
 
 ## Installation
 
