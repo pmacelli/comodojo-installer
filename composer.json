@@ -29,7 +29,7 @@
     "require": {
         "php": "^7.3",
         "composer-plugin-api": "^2.0",
-        "pmarcelli/foundation": "dev-foundation_u7320",
+        "pmarcelli/foundation": "dev-foundation_u7320_2",
         "symfony/yaml": "^5.3"
     },
     "require-dev": {
